@@ -2,7 +2,6 @@
 //TODO: rgba
 //TODO: vendor prefix
 //TODO: more shorthands
-//TODO: Merge instead of keep last selector
 /*
  * Copyright (C) 2012 Yann Bogdanovic - ianbogda@gmail.com
  *
@@ -262,9 +261,6 @@ class CSSqueeze
 			// get the name of the CSS element
 			$name = explode('{', $element);
 			$name = $name[0];
-
-			// Ooch, selectors are in doublon, remove previous one
-			isset($tree[$name]) && $tree[$name] = array();
 
 			// get all the key:value pair styles
 			$styles = explode(';', $element);

@@ -24,12 +24,12 @@ Features
 * Compress colors
   * Use short notations of hexadecimal colors (Ex: color: # ff6600 becomes color: # f60;). Use colors supported in CSS 2 whose name is shorter than the hexadecimal.
 * Sorting CSS properties
+* Merge properties
 
 Todo
 ----
 Compare with others CSS minifiersa
 
-* Merge properties instead of remove doublons
 * Add vendor prefix
 * More shorthands
 * rgba(
