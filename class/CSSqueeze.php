@@ -238,7 +238,7 @@ class CSSqueeze
 	 * $squeezed_css = $parser->squeeze($fat_css);
 	 */
 
-	function squeeze($css, $singleLine = true, $sort = true, $indent = "\t", $shorthand = true)
+	function squeeze($css, $singleLine = true, $sort = true, $indent = '', $shorthand = true)
 	{
 		$f = preg_replace('/[\n]+/', '', $css);
 
@@ -299,22 +299,50 @@ class CSSqueeze
                 {
                     $temp[$name][$key] = $tree[$name][$key];
                 }
+				
             }
 		}
 
-		$s = '';
+		$a = array();
+		// Merge selectors with same styles
 		foreach ($temp as $key => $value)
 		{
-			$s .= $key . '{';
+			$a[$key] = '';
 			foreach ($value as $k => $v)
 			{
-				$s .= $k .':' . $v . ';';
+				$a[$key] .= $k .':' . $v . ';';
 			}
-			$s .= '}';
+		}
+		$a = $this->array_unique_key_group($a);
+
+		$s = '';
+		foreach ($a as $k => $v)
+		{
+			$s .= $k .'{' . $v . '}';
 		}
 		unset($temp, $count, $name, $styles, $a, $key, $value, $k, $v);
 
 		return $s;
+	}
+
+	// from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
+	protected function array_unique_key_group($array)
+	{
+		if(!is_array($array))
+		return false;
+
+		$temp = array_unique($array);
+		foreach($array as $key => $val)
+		{
+			$i = array_search($val,$temp);
+			if(!empty($i) && $key != $i)
+			{
+				$temp[$i.','.$key] = $temp[$i];
+				unset($temp[$i]);
+			}
+		}
+
+		return $temp;
 	}
 
 	protected function cut_color($color)
@@ -494,24 +522,16 @@ class CSSqueeze
 
 	protected function deflat($f, $indent)
 	{
-		/* add whitespace on both side of colon : */
-		$p[] = '/:/';
-		$r[] = ' : ';
+		/* add semicolon before curly bracket } and newline after */
+		$p[] = '/([}])/';
+		$r[] = ";$1\n\n";
+
+		/* add whitespace before curly bracket { */
+		$p[] = '/([{])/';
+		$r[] = " $1\n";
 
 		/* add newlines after semicolons ; */
 		$p[] = '/([;])/';
-		$r[] = "$1\n";
-
-		/* add semicolon before  curly bracket } */
-		$p[] = '/([}])/';
-		$r[] = ";$1";
-
-		/* add newline before curly bracket { */
-		$p[] = '/([{}])/';
-		$r[] = "\n$1";
-
-		/* add newline after curly bracket } and comma ,*/
-		$p[] = '/([{},])/';
 		$r[] = "$1\n";
 
 		if ($indent)
