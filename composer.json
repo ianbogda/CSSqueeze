@@ -1,0 +1,23 @@
+{
+    "name": "patchwork/cssqueeze",
+    "type": "library",
+    "description": "Efficient CSS minification in PHP",
+    "keywords": ["css","compression","minification"],
+    "homepage": "https://github.com/ianbogda/csSqueeze",
+    "license": "(Apache-2.0 or GPL-2.0)",
+    "authors": [
+        {
+            "name": "Yann Bogdanovic",
+            "email": "ianbogda@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.1.4"
+    },
+    "autoload": {
+        "psr-0": {
+            "csSqueeze": "class/"
+        }
+    }
+}
