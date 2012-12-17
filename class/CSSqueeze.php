@@ -418,7 +418,13 @@ class CSSqueeze
 
 	protected function compress($f)
 	{
+		$p = $r = array();
+
 		$units = implode('|', $this->units);
+
+        // minimize hex colors
+        $p[] = '/([^=])#([a-f\\d])\\2([a-f\\d])\\3([a-f\\d])\\4([\\s;\\}])/i';
+        $r[] = '$1#$2$3$4$5';
 
 		/* 0.1em => .1em */
 		$p[] = "#(-?)0\.(\d+({$units}))#";
