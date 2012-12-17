@@ -504,229 +504,65 @@ class CSSqueeze
 	 * $squeezed_css = $parser->squeeze($fat_css);
 	 */
 
-	function squeeze($css, $singleLine = true, $sort = true, $indent = '', $shorthand = true)
+	function squeeze($css, $singleLine = true)
 	{
-		$f = preg_replace('/[\n]+/', '', $css);
+		$css = trim($css);
+		if ('' === $css) return '';
 
-		$sort      && $f = $this->sorter($f);
-		$shorthand && $f = $this->shortand($f);
-		$f = $this->compress($f);
-		!$singleLine && $f = $this->deflat($f, $indent);
+		list($selectors, $blocks) = $this->tokenize($css);
 
-		return $f;
+		$f = '';
+		foreach($selectors as $k => $v)
+		{
+			$f .= $v . '{' . $blocks[$k] . '}';
+		}
+
+		return $singleLine ? $this->compress($f) : $this->deflat($f);
 	}
 
-	protected function sorter($css)
+	protected function tokenize($lines)
 	{
-		$tree = $temp = array(); // master array to hold all values
-		$elements = explode('}', $css);
-		array_pop($elements);
+		$css = '';
+		$token = array();
 
-		foreach ($elements as $element)
+		$lines = preg_split("/\n/", $lines);
+		foreach($lines as $num => $line)
 		{
-			// get the name of the CSS element
-			$name = explode('{', $element);
-			$name = $name[0];
+ 			$css .= trim($line);
+		}
 
-			// get all the key:value pair styles
-			$styles = explode(';', $element);
+		$token = strtok($css, "{}");
 
-			// remove element name from first property element
-			$styles[0] = str_replace($name . '{', '', $styles[0]);
+		$rules = array();
+		$pos = 0;
 
-			// loop through each style and split apart the key from the value
-			$count = count($styles);
-			for ($a = 0; $a < $count; $a++)
+		while ($token !== false)
+		{
+ 			$rules[$pos] = $token;
+			++$pos;
+			$token = strtok('{}');
+		}
+
+ 		$size = count($rules);
+
+		$selectors = $blocks = array();
+		$spos = $bpos = 0;
+
+		for ($i = 0; $i<$size; ++$i)
+		{
+			if ($i % 2 == 0)
 			{
-				if ('' !== $styles[$a])
-				{
-					$key_value = explode(':', $styles[$a]);
-
-					// build the master css tree
-					if (isset($key_value[1]))
-					{
-					    $key   = trim(strtolower($key_value[0]));
-					    $value = trim($key_value[1]);
-
-					    if (isset($this->color_values[$key]))
-					    {
-					        $value = $this->cut_color($value);
-					    }
-					    $tree[$name][$key] = $value;
-					}
-				}
+				$selectors[$spos] = $rules[$i];
+				++$spos;
 			}
-
-			// Keep only specified and valid properties
-		    if (isset($tree[$name]) && is_array($tree[$name]))
-		    {
-		        $temp[$name] = array_intersect_key($this->properties, $tree[$name]);
-		        foreach ($temp[$name] as $key => $value)
-		        {
-		            $temp[$name][$key] = $tree[$name][$key];
-		        }
-				
-		    }
-		}
-
-		$a = array();
-		// Merge selectors with same styles
-		foreach ($temp as $key => $value)
-		{
-			$a[$key] = '';
-			foreach ($value as $k => $v)
+			else
 			{
-				$a[$key] .= $k .':' . $v . ';';
-			}
-		}
-		$a = $this->array_unique_key_group($a);
-
-		$s = '';
-		foreach ($a as $k => $v)
-		{
-			$s .= $k .'{' . $v . '}';
-		}
-		unset($temp, $count, $name, $styles, $a, $key, $value, $k, $v);
-
-		return $s;
-	}
-
-	// from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
-	protected function array_unique_key_group($array)
-	{
-		if(!is_array($array))
-		return false;
-
-		$temp = array_unique($array);
-		foreach($array as $key => $val)
-		{
-			$i = array_search($val,$temp);
-			if(!empty($i) && $key != $i)
-			{
-				$temp[$i.','.$key] = $temp[$i];
-				unset($temp[$i]);
+				$blocks[$bpos] = $rules[$i];
+				++$bpos;
 			}
 		}
 
-		return $temp;
-	}
-
-	protected function cut_color($color)
-	{
-		$color = strtolower($color);
-
-		// rgb(0,0,0) -> #000000 (or #000 in this case later)
-		if ('rgb(' == substr($color,0,4))
-		{
-			$color_tmp = substr($color,4,strlen($color)-5);
-			$color_tmp = explode(',',$color_tmp);
-			for ( $i = 0; $i < count($color_tmp); $i++ )
-			{
-				$color_tmp[$i] = trim ($color_tmp[$i]);
-				if(substr($color_tmp[$i],-1) == '%')
-				{
-					$color_tmp[$i] = round((255*$color_tmp[$i])/100);
-				}
-				if($color_tmp[$i]>255) $color_tmp[$i] = 255;
-			}
-			$color = '#';
-			for ($i = 0; $i < 3; $i++ )
-			{
-				if($color_tmp[$i]<16) {
-					$color .= '0' . dechex($color_tmp[$i]);
-				} else {
-					$color .= dechex($color_tmp[$i]);
-				}
-			}
-		}
-
-		// Fix bad color names
-		if (isset($this->replace_colors[$color]))
-		{
-			$color = $this->replace_colors[$color];
-		}
-
-		// #aabbcc -> #abc
-		if (7 == strlen($color))
-		{
-			$color_temp = strtolower($color);
-			if ('#' == $color_temp{0} && $color_temp{1} == $color_temp{2} && $color_temp{3} == $color_temp{4} && $color_temp{5} == $color_temp{6})
-			{
-				$color = strtoupper('#'.$color{1}.$color{3}.$color{5});
-			}
-		}
-		elseif (4 == strlen($color)) $color = strtoupper($color);
-
-		switch($color)
-		{
-			/* color name -> hex code */
-			case 'black'  : return '#000';
-			case 'fuchsia': return '#F0F';
-			case 'white'  : return '#FFF';
-			case 'yellow' : return '#FF0';
-
-			/* hex code -> color name */
-			case '#800000': return 'maroon';
-			case '#ffa500': return 'orange';
-			case '#808000': return 'olive';
-			case '#800080': return 'purple';
-			case '#008000': return 'green';
-			case '#000080': return 'navy';
-			case '#008080': return 'teal';
-			case '#c0c0c0': return 'silver';
-			case '#808080': return 'gray';
-			case '#C00'   : return 'red';
-		}
-
-		return $color;
-	}
-
-	protected function shortand($f)
-	{
-		$p = $r = array();
-		$units      = implode('|', $this->units     );
-		$fontSize   = implode('|', $this->fontSize  );
-		$fontStyle  = implode('|', $this->fontStyle );
-		$fontWeight = implode('|', $this->fontWeight);
-
-		$property  = '((' . implode('|', array_keys($this->shorthands)) .')(\s)*:(\s)*)';
-		$numeric   = '-?([0-9]+|([0-9]*\.[0-9]+))';
-		$important = '(\s*!important\s*)?';
-		$parameter = "({$numeric}({$units})|auto|inherit)";
-
-		// shorthand properties
-		// font: 1em/1.5em bold italic serif
-		$p[] = "/(font-family):([ -_ a-zA-Z0-9]+);(font-style):({$fontStyle});(font-weight):({$fontWeight});(font-size):([.0-9]+)({$units});(line-height):({$numeric})({$units});/";
-		$r[] = 'font:$8$9/$13$14 $6 $4 $2;';
-
-		// background: #fff url(image.gif) no-repeat top left
-		$p[] = '/(background-color):([#a-zA-Z]+);(background-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\));(background-repeat):(repeat|no-repeat|repeat-x|repeat-y|inherit);(background-position):(top|right|bottom|left|center)(\s+)?(top|right|bottom|left|center);/';
-		$r[] = 'background:$2 $4 $6 $8 $10;';
-
-		foreach ($this->shorthands as $k => $v)
-		{
-			// (margin|padding|border): 2px 1px 3px 4px (top, right, bottom, left)
-			$p[] = "/({$k}-top):(({$numeric})({$units}));({$k}-right):(({$numeric})({$units}));({$k}-bottom):(({$numeric})({$units}));({$k}-left):(({$numeric})({$units}));/";
-			$r[] = "{$k}:$2 $8 $14 $20;";
-
-		}
-
-		//  list-style: disc outside url(image.gif)
-		$position = implode('|', $this->listeStyleType);
-		$p[] = "/(liste-style):([#a-zA-Z]+);(liste-style-type):({$position});(liste-style-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\)|none|inherit);(liste-style-position):(inside|outside|inherit);/";
-		$r[] = 'liste-style:$2 $4 $7 $9;';
-
-		// 1px 1px 1px 1px => 1px
-		$p[] = "#{$property}({$parameter})" . '\s\5\s\5\s\5' . "{$important};#";
-		$r[] = '$1$5$10;';
-		// 1px 2px 1px 2px => 1px 2px
-		$p[] ="#{$property}({$parameter}\s)({$parameter})" . '\s\5\10' . "{$important};#";
-		$r[] = '$1$5$10$15;';
-		// 1px 2px 3px 2px => 1px 2px 3px
-		$p[] = "#{$property}({$parameter}\s)({$parameter})\s({$parameter})" . '\s\10' . "{$important};#";
-		$r[] = '$1$5$10 $15$20;';
-
-		return preg_replace($p, $r, $f);
+		return array($selectors, $blocks);
 	}
 
 	protected function compress($f)
@@ -809,3 +645,20 @@ class CSSqueeze
 		return preg_replace($p, $r, $f);
 	}
 }
+
+$css = 'p{
+  color:#000000;
+}
+h1{
+   font-size:18px;
+   color:#666666;
+}
+/*! important
+*/
+table{
+   width:100%; /* comment */
+   border:/**/1px solid #000000;
+}';
+echo $css;
+$p = New CSSqueeze();
+print_r($p->squeeze($css));
