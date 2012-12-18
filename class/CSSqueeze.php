@@ -442,6 +442,10 @@ class CSSqueeze
 		$p[] = '#([^}]+){}#isU';
 		$r[] = '';
 
+		/* remove comments */
+		$p[] = '/\/\*(.*)\*\//';
+		$r[] = '';
+
 		/* remove tabs, spaces, newlines, etc. */
 		$p[] = '/\r\n|\r|\n|\t|\s\s+/';
 		$r[] = '';
@@ -498,20 +502,3 @@ class CSSqueeze
 		return preg_replace($p, $r, $f);
 	}
 }
-
-$css = 'p{
-  color:#000000;
-}
-h1{
-   font-size:18px;
-   color:#666666;
-}
-/*! important
-*/
-table{
-   width:100%; /* comment */
-   border:/**/1px solid #000000;
-}';
-echo $css;
-$p = New CSSqueeze();
-print_r($p->squeeze($css));
