@@ -368,6 +368,10 @@ class CSSqueeze
 			$css = preg_replace('/:first-l(etter|ine)\\{/', ':first-l$1 {', $css);
 		}
 
+		/* remove comments */
+        $css = preg_replace('/\/\*(.*)\*\//', '', $css);
+
+
 		return $css;
 	}
 
@@ -408,12 +412,151 @@ class CSSqueeze
 			}
 			else
 			{
-				$blocks[$bpos] = $rules[$i];
+				$blocks[$bpos] = $this->sorter($rules[$i]);
 				++$bpos;
 			}
 		}
 
 		return array($selectors, $blocks);
+	}
+
+	protected function sorter($block)
+	{
+		$a = $b = array(); // master array to hold all values
+
+		$declarations = explode(';', $block);
+
+		// loop through each style and split apart the key from the value
+		$count = count($declarations);
+		for ($i = 0; $i < $count; ++$i)
+		{
+			if ('' !== $declarations[$i])
+			{
+				$property_value = explode(':', $declarations[$i]);
+
+				// build the master css tree
+				if (isset($property_value[1]))
+				{
+				    $property = trim(strtolower($property_value[0]));
+				    $value    = trim($property_value[1]);
+
+				    if (isset($this->color_values[$property]))
+				    {
+				        $value = $this->cut_color($value);
+				    }
+				    $a[$property] = $value;
+				}
+			}
+		}
+
+		// Keep only specified and valid properties
+	    $b = array_intersect_key($this->properties, $a);
+	    foreach ($b as $key => $value)
+	    {
+	        $b[$key] = $a[$key];
+	    }
+		unset($a);
+
+		$b = $this->array_unique_key_group($b);
+
+		$block = '';
+		foreach ($b as $k => $v)
+		{
+			$block .= $k .':' . $v . ';';
+		}
+		unset($b);
+
+		return $block;
+	}
+
+	protected function cut_color($color)
+	{
+		$color = strtolower($color);
+
+		// rgb(0,0,0) -> #000000 (or #000 in this case later)
+		if ('rgb(' == substr($color,0,4))
+		{
+			$color_tmp = substr($color,4,strlen($color)-5);
+			$color_tmp = explode(',',$color_tmp);
+			for ( $i = 0; $i < count($color_tmp); $i++ )
+			{
+				$color_tmp[$i] = trim ($color_tmp[$i]);
+				if(substr($color_tmp[$i],-1) == '%')
+				{
+					$color_tmp[$i] = round((255*$color_tmp[$i])/100);
+				}
+				if($color_tmp[$i]>255) $color_tmp[$i] = 255;
+			}
+			$color = '#';
+			for ($i = 0; $i < 3; $i++ )
+			{
+				if($color_tmp[$i]<16) {
+					$color .= '0' . dechex($color_tmp[$i]);
+				} else {
+					$color .= dechex($color_tmp[$i]);
+				}
+			}
+		}
+
+		// Fix bad color names
+		if (isset($this->replace_colors[$color]))
+		{
+			$color = $this->replace_colors[$color];
+		}
+
+		// #aabbcc -> #abc
+		if (7 == strlen($color))
+		{
+			$color_temp = strtolower($color);
+			if ('#' == $color_temp{0} && $color_temp{1} == $color_temp{2} && $color_temp{3} == $color_temp{4} && $color_temp{5} == $color_temp{6})
+			{
+				$color = strtoupper('#'.$color{1}.$color{3}.$color{5});
+			}
+		}
+		elseif (4 == strlen($color)) $color = strtoupper($color);
+
+		switch($color)
+		{
+			/* color name -> hex code */
+			case 'black'  : return '#000';
+			case 'fuchsia': return '#F0F';
+			case 'white'  : return '#FFF';
+			case 'yellow' : return '#FF0';
+
+			/* hex code -> color name */
+			case '#800000': return 'maroon';
+			case '#ffa500': return 'orange';
+			case '#808000': return 'olive';
+			case '#800080': return 'purple';
+			case '#008000': return 'green';
+			case '#000080': return 'navy';
+			case '#008080': return 'teal';
+			case '#c0c0c0': return 'silver';
+			case '#808080': return 'gray';
+			case '#C00'   : return 'red';
+		}
+
+		return $color;
+	}
+
+	// from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
+	protected function array_unique_key_group($array)
+	{
+		if(!is_array($array))
+		return false;
+
+		$temp = array_unique($array);
+		foreach($array as $key => $val)
+		{
+			$i = array_search($val,$temp);
+			if(!empty($i) && $key != $i)
+			{
+				$temp[$i.','.$key] = $temp[$i];
+				unset($temp[$i]);
+			}
+		}
+
+		return $temp;
 	}
 
 	protected function compress($f)
