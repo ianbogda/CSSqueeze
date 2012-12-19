@@ -340,15 +340,20 @@ class CSSqueeze
 
 		list($selectors, $blocks) = $this->tokenize($css);
 
-		$f = '';
+		$a = array();
 		$tokens = count($selectors);
 		for ($i = 0; $i < $tokens; ++$i)
 		{
-			$f .= $selectors[$i] . '{' . $blocks[$i] . '}';
+			$a[$selectors[$i]] = $blocks[$i];
 		}
 
-		//$f = $this->array_unique_key_group((array)$f);
-
+		$a = $this->array_unique_key_group($a);
+		$c = count($a);
+		$f = '';
+		foreach ($a as $k => $v)
+		{
+			$f .= $k . '{' . $v . '}';
+		}
 		$f = $this->compress($f);
 
 		return $singleLine ? $f : $this->deflat($f);
@@ -357,36 +362,41 @@ class CSSqueeze
 	// from http://minify.googlecode.com/svn/trunk/min/lib/Minify/CSS/Compressor.php
 	protected function prepareComments($css)
 	{
+		$p = $r = array();
+
 		if ($this->keepHack)
 		{
 			// preserve empty comment after '>'
 			// http://www.webdevout.net/css-hacks#in_css-selectors
-			$css = preg_replace('@>/\\*\\s*\\*/@', '>/*keep*/', $css);
+			$p[] = '@>/\\*\\s*\\*/@';
+			$r[] = '>/*keep*/';
 
 			// preserve empty comment between property and value
 			// http://css-discuss.incutio.com/?page=BoxModelHack
-			$css = preg_replace('@/\\*\\s*\\*/\\s*:@', '/*keep*/:', $css);
-			$css = preg_replace('@:\\s*/\\*\\s*\\*/@', ':/*keep*/', $css);
+			$p[] = '@/\\*\\s*\\*/\\s*:@';
+			$r[] = '/*keep*/:';
+
+			$p[] = '@:\\s*/\\*\\s*\\*/@';
+			$r[] = ':/*keep*/';
 
 			// prevent triggering IE6 bug: http://www.crankygeek.com/ie6pebug/
-			$css = preg_replace('/:first-l(etter|ine)\\{/', ':first-l$1 {', $css);
+			$p[] = '/:first-l(etter|ine)\\{/';
+			$r[] = ':first-l$1 {';
 		}
 
 		/* remove comments but keep importants one */
-		$css = preg_replace('/\/\*[^\!].*\*\//', '', $css);
+		$p[] = '/\/\*[^\!].*\*\//';
+		$r[] = '';
 
-		return $css;
+		return preg_replace($p, $r, $css);
 	}
 
 	protected function tokenize($lines)
 	{
-		$css = '';
-		$token = array();
+		$token = $rules = $selectors = $blocks = array();
+		$pos = $spos = $bpos = 0;
 
 		$token = strtok((string)$lines, "{}");
-
-		$rules = array();
-		$pos = 0;
 
 		while ($token !== false)
 		{
@@ -396,9 +406,6 @@ class CSSqueeze
 		}
 
  		$size = count($rules);
-
-		$selectors = $blocks = array();
-		$spos = $bpos = 0;
 
 		for ($i = 0; $i < $size; ++$i)
 		{
@@ -413,6 +420,7 @@ class CSSqueeze
 				++$bpos;
 			}
 		}
+		unset($token, $rules, $size, $pos, $spos, $bpos);
 
 		return array($selectors, $blocks);
 	}
@@ -474,23 +482,29 @@ class CSSqueeze
 		{
 			$color_tmp = substr($color,4,strlen($color)-5);
 			$color_tmp = explode(',',$color_tmp);
-			for ( $i = 0; $i < count($color_tmp); $i++ )
+			$c = count($color_tmp);
+			for ($i = 0; $i < $c; ++$i)
 			{
 				$color_tmp[$i] = trim ($color_tmp[$i]);
-				if(substr($color_tmp[$i],-1) == '%')
+				if (substr('%' == $color_tmp[$i],-1))
 				{
 					$color_tmp[$i] = round((255*$color_tmp[$i])/100);
 				}
-				if($color_tmp[$i]>255) $color_tmp[$i] = 255;
+				if ($color_tmp[$i]>255) $color_tmp[$i] = 255;
 			}
 			$color = '#';
-			for ($i = 0; $i < 3; $i++ )
+			for ($i = 0; $i < 3; ++$i )
 			{
-				if($color_tmp[$i]<16) {
+				if ($color_tmp[$i]<16)
+				{
 					$color .= '0' . dechex($color_tmp[$i]);
-				} else {
+				}
+				else
+				{
 					$color .= dechex($color_tmp[$i]);
 				}
+				unset($color_tmp[$i]);
+
 			}
 		}
 
@@ -510,6 +524,7 @@ class CSSqueeze
 			}
 		}
 		elseif (4 == strlen($color)) $color = strtoupper($color);
+		unset($color_tmp);
 
 		switch($color)
 		{
@@ -538,14 +553,13 @@ class CSSqueeze
 	// from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
 	protected function array_unique_key_group($array)
 	{
-		if(!is_array($array))
-		return false;
+		if (!is_array($array)) return false;
 
 		$temp = array_unique($array);
-		foreach($array as $key => $val)
+		foreach ($array as $key => $val)
 		{
 			$i = array_search($val,$temp);
-			if(!empty($i) && $key != $i)
+			if (!empty($i) && $key != $i)
 			{
 				$temp[$i.','.$key] = $temp[$i];
 				unset($temp[$i]);
