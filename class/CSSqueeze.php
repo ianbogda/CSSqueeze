@@ -347,6 +347,8 @@ class CSSqueeze
 			$f .= $selectors[$i] . '{' . $blocks[$i] . '}';
 		}
 
+        //$f = $this->array_unique_key_group((array)$f);
+
 		return $singleLine ? $this->compress($f) : $this->deflat($f);
 	}
 
@@ -450,8 +452,6 @@ class CSSqueeze
 	    }
 		unset($a);
 
-		$b = $this->array_unique_key_group($b);
-
 		$block = '';
 		foreach ($b as $k => $v)
 		{
@@ -554,6 +554,8 @@ class CSSqueeze
 
 	protected function compress($f)
 	{
+        $f = $this->shortand($f);
+
 		$p = $r = array();
 
 		$units = implode('|', $this->units);
@@ -595,9 +597,9 @@ class CSSqueeze
 		$r[] = ':';
 
 		/* remove whitespace on both sides of curly brackets {} */
-		$p[] = '/\s?\{\s?/';
+		$p[] = '/\W\s?\{\s?/';
 		$r[] = '{';
-		$p[] = '/\s?\}\s?/';
+		$p[] = '/\W\s?\}\W\s?/';
 		$r[] = '}';
 
 		/* remove whitespace on both sides of commas , */
@@ -614,6 +616,54 @@ class CSSqueeze
 		
 		return preg_replace($p, $r, $f);
 	}
+
+    protected function shortand($f)
+    {
+        $p = $r = array();
+        $units      = implode('|', $this->units     );
+        $fontSize   = implode('|', $this->fontSize  );
+        $fontStyle  = implode('|', $this->fontStyle );
+        $fontWeight = implode('|', $this->fontWeight);
+
+        $property  = '((' . implode('|', array_keys($this->shorthands)) .')(\s)*:(\s)*)';
+        $numeric   = '-?([0-9]+|([0-9]*\.[0-9]+))';
+        $important = '(\s*!important\s*)?';
+        $parameter = "({$numeric}({$units})|auto|inherit)";
+
+        // shorthand properties
+        // font: 1em/1.5em bold italic serif
+        $p[] = "/(font-family):([ -_ a-zA-Z0-9]+);(font-style):({$fontStyle});(font-weight):({$fontWeight});(font-size):([.0-9]+)({$units});(line-height):({$numeric})({$units});/";
+        $r[] = 'font:$8$9/$13$14 $6 $4 $2;';
+
+        // background: #fff url(image.gif) no-repeat top left
+        $p[] = '/(background-color):([#a-zA-Z]+);(background-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\));(background-repeat):(repeat|no-repeat|repeat-x|repeat-y|inherit);(background-position):(top|right|bottom|left|center)(\s+)?(top|right|bottom|left|center);/';
+        $r[] = 'background:$2 $4 $6 $8 $10;';
+
+        foreach ($this->shorthands as $k => $v)
+        {
+            // (margin|padding|border): 2px 1px 3px 4px (top, right, bottom, left)
+            $p[] = "/({$k}-top):(({$numeric})({$units}));({$k}-right):(({$numeric})({$units}));({$k}-bottom):(({$numeric})({$units}));({$k}-left):(({$numeric})({$units}));/";
+            $r[] = "{$k}:$2 $8 $14 $20;";
+
+        }
+
+        //  list-style: disc outside url(image.gif)
+        $position = implode('|', $this->listeStyleType);
+        $p[] = "/(liste-style):([#a-zA-Z]+);(liste-style-type):({$position});(liste-style-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\)|none|inherit);(liste-style-position):(inside|outside|inherit);/";
+        $r[] = 'liste-style:$2 $4 $7 $9;';
+
+        // 1px 1px 1px 1px => 1px
+        $p[] = "#{$property}({$parameter})" . '\s\5\s\5\s\5' . "{$important};#";
+        $r[] = '$1$5$10;';
+        // 1px 2px 1px 2px => 1px 2px
+        $p[] ="#{$property}({$parameter}\s)({$parameter})" . '\s\5\10' . "{$important};#";
+        $r[] = '$1$5$10$15;';
+        // 1px 2px 3px 2px => 1px 2px 3px
+        $p[] = "#{$property}({$parameter}\s)({$parameter})\s({$parameter})" . '\s\10' . "{$important};#";
+        $r[] = '$1$5$10 $15$20;';
+
+        return preg_replace($p, $r, $f);
+    }
 
 	protected function deflat($f, $indent)
 	{
