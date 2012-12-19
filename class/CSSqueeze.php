@@ -597,12 +597,12 @@ class CSSqueeze
 		$r[] = '';
 
 		/* remove tabs, spaces, newlines, etc. */
+		$p[] = '`\A[ \t]*\r?\n|\r?\n[ \t]*\Z`';
+		$r[] = '';
 		$p[] = '/^\/\*(\r\n|\r|\n|\t|\s\s+)/';
+		$r[] = '';
+		$p[] = '/(\*\/)\r?\n?/';
 		$r[] = '$1';
-
-		/* remove tabs, spaces, newlines, etc. */
-		$p[] = '/\*\/\s+/';
-		$r[] = '*/';
 
 		// Fix url()
 		$p[] = '#(url|rgba|rgb|hsl|hsla|attr)\((.*)\)(\S)#isU';
