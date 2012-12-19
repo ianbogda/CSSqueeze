@@ -368,9 +368,8 @@ class CSSqueeze
 			$css = preg_replace('/:first-l(etter|ine)\\{/', ':first-l$1 {', $css);
 		}
 
-		/* remove comments */
-        $css = preg_replace('/\/\*(.*)\*\//', '', $css);
-
+		/* remove comments but keep importants one */
+        $css = preg_replace('/\/\*[^\!].*\*\//', '', $css);
 
 		return $css;
 	}
@@ -380,13 +379,7 @@ class CSSqueeze
 		$css = '';
 		$token = array();
 
-		$lines = preg_split("/\n/", $lines);
-		foreach($lines as $num => $line)
-		{
- 			$css .= trim($line);
-		}
-
-		$token = strtok($css, "{}");
+		$token = strtok((string)$lines, "{}");
 
 		$rules = array();
 		$pos = 0;
@@ -449,7 +442,7 @@ class CSSqueeze
 			}
 		}
 
-		// Keep only specified and valid properties
+		// Keep only specified and valid properties (this remove ie hacks)
 	    $b = array_intersect_key($this->properties, $a);
 	    foreach ($b as $key => $value)
 	    {
@@ -585,13 +578,13 @@ class CSSqueeze
 		$p[] = '#([^}]+){}#isU';
 		$r[] = '';
 
-		/* remove comments */
-		$p[] = '/\/\*(.*)\*\//';
-		$r[] = '';
+		/* remove tabs, spaces, newlines, etc. */
+		$p[] = '/^\/\*(\r\n|\r|\n|\t|\s\s+)/';
+		$r[] = '$1';
 
 		/* remove tabs, spaces, newlines, etc. */
-		$p[] = '/\r\n|\r|\n|\t|\s\s+/';
-		$r[] = '';
+		$p[] = '/\*\/\s+/';
+		$r[] = '*/';
 
 		// Fix url()
 		$p[] = '#(url|rgba|rgb|hsl|hsla|attr)\((.*)\)(\S)#isU';
