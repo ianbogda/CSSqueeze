@@ -4,3 +4,9 @@ float:       left  ;}
 html > .classname1 { color: black;}
 
 input [ type = submit ] { width: 120px;}
+#div .classname2,
+#div .classname3
+{
+	font-weight : bold;
+}
+
