@@ -1,3 +1,6 @@
 .classname {
   border    :   12px;
 float:       left  ;}
+html > .classname1 { color: black;}
+
+input [ type = submit ] { width: 120px;}

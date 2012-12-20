@@ -616,12 +616,16 @@ class CSSqueeze
 		$p[] = '#(url|rgba|rgb|hsl|hsla|attr)\((.*)\)(\S)#isU';
 		$r[] = '$1($2) $3';
 
-		/* remove whitespace on both sides of colons :*/
-		$p[] = '/\s?\:\s?/';
-		$r[] = ':';
+		/* remove whitespace around operators */
+		$p[] = '/(?<=[\[\(>+=]|=[=~^$*|>+\]\)])/';
+		$r[] = '';
+
+		/* remove whitespace on both sides of colons znd operators : >=[]~ */
+		$p[] = '/\s?(\:|\>|=|\[|\]|~)\s?/';
+		$r[] = '$1';
 
 		/* remove whitespace on both sides of curly brackets {} */
-		$p[] = '/\W\s?\{\s?/';
+		$p[] = '/\s?\{\s?/';
 		$r[] = '{';
 		$p[] = '/\W\s?\}\W\s?/';
 		$r[] = '}';
