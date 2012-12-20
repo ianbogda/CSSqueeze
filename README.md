@@ -12,7 +12,7 @@ Features
   * whitespace
   * Last semicolon in a statement
   * Measurement units for the values (eg margin: 0px -> margin: 0)
-  * Comments (while preserving the CSS hack)
+  * Comments (preserving ```/*! important comments */```)
   * Empty statements (eg p {})
 * Use shorthand properties
   * margin
@@ -30,6 +30,7 @@ Todo
 ----
 Compare with others CSS minifiersa
 
+* preserving the CSS hack
 * Add vendor prefix
 * More shorthands
 * rgba(
