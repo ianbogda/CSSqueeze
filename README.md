@@ -31,6 +31,7 @@ Todo
 Compare with others CSS minifiersa
 
 * preserving the CSS hack
+* merge rules if required
 * Add vendor prefix
 * More shorthands
 * rgba(
