@@ -29,7 +29,7 @@ Features
 
 Todo
 ----
-Compare with others CSS minifiersa
+Compare with others CSS minifiers
 
 * preserving the CSS hack
 * Add vendor prefix
