@@ -1,0 +1,6 @@
+#dmc {
+  border:1px solid green;
+}
+*+html #dmc {
+  border:1px solid red;
+}
