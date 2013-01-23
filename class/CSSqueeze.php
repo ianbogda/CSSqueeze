@@ -340,7 +340,20 @@ class CSSqueeze
 
 		list($selectors, $blocks) = $this->tokenize($css);
 
-		// merge same slectors //
+		// Merge selectors //
+		list($s, $b) = $this->mergeSelectors($selectors, $blocks);
+		$_css_ = $this->uniqueArray($s, $b);
+
+		// Which one ?
+		$_css = $this->uniqueArray($selectors, $blocks);
+		$f = strlen($_css_) > strlen($_css) ? $_css : $_css_;
+
+		return $singleLine ? $f : $this->deflat($f);
+	}
+
+	protected function mergeSelectors($selectors, $blocks)
+	{
+		// merge same selectors //
 		$b = array();
 		$a = array_count_values($selectors);
 		
@@ -371,6 +384,11 @@ class CSSqueeze
 			$blocks[]    = $this->sorter($v);
 		}
 
+		return array($selectors, $blocks);
+	}
+
+	protected function uniqueArray($selectors, $blocks)
+	{
 		// Prepare to have unique array
 		$a = array();
 		$tokens = count($selectors);
@@ -386,9 +404,8 @@ class CSSqueeze
 		{
 			$f .= $k . '{' . $v . '}';
 		}
-		$f = $this->compress($f);
 
-		return $singleLine ? $f : $this->deflat($f);
+		return $this->compress($f);
 	}
 
 	// from http://minify.googlecode.com/svn/trunk/min/lib/Minify/CSS/Compressor.php
@@ -443,21 +460,13 @@ class CSSqueeze
 		{
 			if (0 == $i % 2)
 			{
-				$sel = explode(',', $rules[$i]);
-				$j = count($sel);
-				for ($k = 0; $k < $j; ++$k)
-				{
-					$selectors[$spos] = "\n" . trim($sel[$k]);
-					++$spos;
-				}
+				$selectors[$spos] = "\n" . trim($rules[$i]);
+				++$spos;
 			}
 			else
 			{
-				for ($k = 0; $k < $j; ++$k)
-				{
-					$blocks[$bpos] = $this->sorter($rules[$i]);
-					++$bpos;
-				}
+				$blocks[$bpos] = $this->sorter($rules[$i]);
+				++$bpos;
 			}
 		}
 		unset($token, $rules, $size, $pos, $spos, $bpos);
