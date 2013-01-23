@@ -340,6 +340,38 @@ class CSSqueeze
 
 		list($selectors, $blocks) = $this->tokenize($css);
 
+		// merge same slectors //
+		$b = array();
+		$a = array_count_values($selectors);
+		
+		foreach ($a as $k => $v)
+		{
+			reset($selectors);
+			while (list($k2, $v2) = each($selectors))
+			{
+				if ($v2 == $k)
+				{
+					if (isset($b[$k]))
+					{
+						$b[$k] .= $blocks[$k2];
+					}
+					else
+					{
+						$b[$k] = $blocks[$k2];
+					}
+				}
+			}
+		}
+
+		$selectors = array();
+		$blocks    = array();
+		foreach ($b as $k => $v)
+		{
+			$selectors[] = $k;
+			$blocks[]    = $this->sorter($v);
+		}
+
+		// Prepare to have unique array
 		$a = array();
 		$tokens = count($selectors);
 		for ($i = 0; $i < $tokens; ++$i)
@@ -411,13 +443,21 @@ class CSSqueeze
 		{
 			if (0 == $i % 2)
 			{
-				$selectors[$spos] = $rules[$i];
-				++$spos;
+				$sel = explode(',', $rules[$i]);
+				$j = count($sel);
+				for ($k = 0; $k < $j; ++$k)
+				{
+					$selectors[$spos] = "\n" . trim($sel[$k]);
+					++$spos;
+				}
 			}
 			else
 			{
-				$blocks[$bpos] = $this->sorter($rules[$i]);
-				++$bpos;
+				for ($k = 0; $k < $j; ++$k)
+				{
+					$blocks[$bpos] = $this->sorter($rules[$i]);
+					++$bpos;
+				}
 			}
 		}
 		unset($token, $rules, $size, $pos, $spos, $bpos);
@@ -547,7 +587,7 @@ class CSSqueeze
 			case '#C00'   : return 'red';
 		}
 
-		return $color;
+		return strtolower($color);
 	}
 
 	// from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102

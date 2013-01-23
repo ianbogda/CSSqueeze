@@ -1,0 +1,20 @@
+#id {
+color: #FFFF00;
+width: 200px;
+height: 180px;
+}
+.classname {
+color: yellow;
+width: 200px;
+height: 180px;
+margin :0 auto;
+}
+#id {
+color: #FFFF00;
+margin: 0 auto;
+}
+#id2
+{
+width: 200px;
+height: 180px;
+}
