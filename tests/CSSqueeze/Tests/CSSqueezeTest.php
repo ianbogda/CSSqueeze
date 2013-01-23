@@ -6,7 +6,7 @@ use CSSqueeze;
 
 class CSSqueezeTest extends \PHPUnit_Framework_TestCase
 {
-    function testYUICompressor()
+    function testCSSqueezeCompressor()
     {
         if ($h = opendir(__DIR__ . '/test/'))
         {
