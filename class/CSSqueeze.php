@@ -398,7 +398,7 @@ class CSSqueeze
 
 		$token = strtok((string)$lines, "{}");
 
-		while ($token !== false)
+		while (false !== $token)
 		{
  			$rules[$pos] = $token;
 			++$pos;
@@ -409,7 +409,7 @@ class CSSqueeze
 
 		for ($i = 0; $i < $size; ++$i)
 		{
-			if ($i % 2 == 0)
+			if (0 == $i % 2)
 			{
 				$selectors[$spos] = $rules[$i];
 				++$spos;
