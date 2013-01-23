@@ -36,3 +36,12 @@ Compare with others CSS minifiers
 * More shorthands
 * rgba(
 * change hack throught html class
+
+Vendors Prefix
+--------------
+
+* -o- Opera
+* -moz- Gecko (Mozilla)
+* -webkit- Webkit (Chrome, Safari, Android...)
+* -ms-/mso- (Internet Explorer)
+* -khtml- KHTML (Konqueror)
