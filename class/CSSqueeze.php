@@ -434,7 +434,7 @@ class CSSqueeze
 		}
 
 		/* remove comments but keep importants one */
-		$p[] = '/\/\*[^\!].*\*\//';
+		$p[] = '#\/\*[^\!].*\*\/#isU';
 		$r[] = '';
 
 		return preg_replace($p, $r, $css);
