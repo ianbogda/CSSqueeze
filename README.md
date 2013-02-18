@@ -1,4 +1,4 @@
-CSSqueeze: Efficient CSS minification in PHP
+CSSqueeze: Efficient CSS minification in PHP [![Build Status](https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master)](https://travis-ci.org/ianbogda/CSSqueeze)
 ==================================================
 
 CSSqueeze …
