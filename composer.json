@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Efficient CSS minification in PHP",
     "keywords": ["css","compression","minification"],
-    "homepage": "https://github.com/ianbogda/csSqueeze",
+    "homepage": "https://github.com/ianbogda/CSSqueeze",
     "license": "(Apache-2.0 or GPL-2.0)",
     "authors": [
         {
@@ -13,11 +13,11 @@
         }
     ],
     "require": {
-        "php": ">=5.1.4"
+        "php": ">=5.3"
     },
     "autoload": {
         "psr-0": {
-            "csSqueeze": "class/"
+            "CSSqueeze": "class/"
         }
     }
 }
