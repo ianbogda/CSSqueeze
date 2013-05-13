@@ -29,7 +29,7 @@ class CSSqueeze
 	),
 	$fontSize       = array('xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'inherit'),
 	$fontStyle      = array('normal', 'italic', 'oblique', 'inherit'),
-	$color_values   = array(
+	$colorValues   = array(
 		'background-color', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color',
 		'border-left-color', 'color',       'outline-color',    'column-rule-color',
 	),
@@ -39,7 +39,7 @@ class CSSqueeze
 		'katakana-iroha', 'lower-alpha', 'lower-greek',     'lower-latin',    'lower-roman',          'none',
 		'square',         'upper-alpha', 'upper-latin',     'upper-roman',
 	),
-	$replace_colors =  array(
+	$replaceColors =  array(
 		'aliceblue'         => '#F0F8FF', 'antiquewhite'         => '#FAEBD7', 'aquamarine'      => '#7FFFD4',
 		'azure'             => '#F0FFFF', 'beige'                => '#F5F5DC', 'bisque'          => '#FFE4C4',
 		'blanchedalmond'    => '#FFEBCD', 'blueviolet'           => '#8A2BE2', 'brown'           => '#A52A2A',
@@ -489,7 +489,7 @@ class CSSqueeze
 	{
 		$this->properties   = array_flip($this->properties  );
 		$this->prop_values  = array_flip($this->prop_values );
-		$this->color_values = array_flip($this->color_values);
+		$this->colorValues = array_flip($this->colorValues);
 	}
 
 	/**
@@ -572,7 +572,7 @@ class CSSqueeze
 			$a[$selectors[$i]] = $blocks[$i];
 		}
 
-		$a = $this->array_unique_key_group($a);
+		$a = $this->arrayUniqueKeyGroup($a);
 		$c = count($a);
 		$f = '';
 		foreach ($a as $k => $v)
@@ -661,17 +661,17 @@ class CSSqueeze
 		{
 			if ('' !== $declarations[$i])
 			{
-				$property_value = explode(':', $declarations[$i]);
+				$propertyValue = explode(':', $declarations[$i]);
 
 				// build the master css tree
-				if (isset($property_value[1]))
+				if (isset($propertyValue[1]))
 				{
-				    $property = trim(strtolower($property_value[0]));
-				    $value    = trim($property_value[1]);
+				    $property = trim(strtolower($propertyValue[0]));
+				    $value    = trim($propertyValue[1]);
 
-				    if (isset($this->color_values[$property]))
+				    if (isset($this->colorValues[$property]))
 				    {
-				        $value = $this->cut_color($value);
+				        $value = $this->cutColor($value);
 				    }
 				    $a[$property] = $value;
 				}
@@ -697,45 +697,45 @@ class CSSqueeze
 		return $block;
 	}
 
-	protected function cut_color($color)
+	protected function cutColor($color)
 	{
 		$color = strtolower($color);
 
 		// rgb(0,0,0) -> #000000 (or #000 in this case later)
 		if ('rgb(' == substr($color,0,4))
 		{
-			$color_tmp = substr($color,4,strlen($color)-5);
-			$color_tmp = explode(',',$color_tmp);
-			$c = count($color_tmp);
+			$colorTmp = substr($color,4,strlen($color)-5);
+			$colorTmp = explode(',',$colorTmp);
+			$c = count($colorTmp);
 			for ($i = 0; $i < $c; ++$i)
 			{
-				$color_tmp[$i] = trim ($color_tmp[$i]);
-				if (substr('%' == $color_tmp[$i],-1))
+				$colorTmp[$i] = trim ($colorTmp[$i]);
+				if (substr('%' == $colorTmp[$i],-1))
 				{
-					$color_tmp[$i] = round((255*$color_tmp[$i])/100);
+					$colorTmp[$i] = round((255*$colorTmp[$i])/100);
 				}
-				if ($color_tmp[$i]>255) $color_tmp[$i] = 255;
+				if ($colorTmp[$i]>255) $colorTmp[$i] = 255;
 			}
 			$color = '#';
 			for ($i = 0; $i < 3; ++$i )
 			{
-				if ($color_tmp[$i]<16)
+				if ($colorTmp[$i]<16)
 				{
-					$color .= '0' . dechex($color_tmp[$i]);
+					$color .= '0' . dechex($colorTmp[$i]);
 				}
 				else
 				{
-					$color .= dechex($color_tmp[$i]);
+					$color .= dechex($colorTmp[$i]);
 				}
-				unset($color_tmp[$i]);
+				unset($colorTmp[$i]);
 
 			}
 		}
 
 		// Fix bad color names
-		if (isset($this->replace_colors[$color]))
+		if (isset($this->replaceColors[$color]))
 		{
-			$color = $this->replace_colors[$color];
+			$color = $this->replaceColors[$color];
 		}
 
 		// #aabbcc -> #abc
@@ -748,7 +748,7 @@ class CSSqueeze
 			}
 		}
 		elseif (4 == strlen($color)) $color = strtoupper($color);
-		unset($color_tmp);
+		unset($colorTmp);
 
 		switch($color)
 		{
@@ -775,7 +775,7 @@ class CSSqueeze
 	}
 
 	// from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
-	protected function array_unique_key_group($array)
+	protected function arrayUniqueKeyGroup($array)
 	{
 		if (!is_array($array)) return false;
 
