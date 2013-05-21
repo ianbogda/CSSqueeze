@@ -20,4 +20,7 @@
             "CSSqueeze": "class/"
         }
     }
+	"require-dev": {
+		"satooshi/php-coveralls": "dev-master"
+	}
 }
