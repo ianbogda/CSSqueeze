@@ -5,6 +5,7 @@ CSSqueeze: Efficient CSS minification in PHP
 
 [![build status](http://ci.cdg46.fr/projects/1/status.png?ref=master)](http://ci.cdg46.fr/projects/1?ref=master)
 
+[![Coverage Status](https://coveralls.io/repos/ianbogda/CSSqueeze/badge.png)](https://coveralls.io/r/ianbogda/CSSqueeze)
 
 CSSqueeze …
 
