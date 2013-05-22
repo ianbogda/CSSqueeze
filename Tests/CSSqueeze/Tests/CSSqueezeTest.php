@@ -1,8 +1,6 @@
 <?php
-
-namespace CSSqueeze\Tests;
-
-use CSSqueeze;
+namespace Patchwork;
+use Patchwork;
 
 class CSSqueezeTest extends \PHPUnit_Framework_TestCase
 {
