@@ -719,7 +719,7 @@ class CSSqueeze
             $color = $colorTmp;
             unset($colorTmp);
         }
-        elseif (1 < $count)
+        elseif ($count)
         {
             $colorTmp = array();
        		for ($i = 0; $i < $count-1; ++$i)
