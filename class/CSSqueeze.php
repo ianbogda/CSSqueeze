@@ -652,7 +652,7 @@ class CSSqueeze
 
 	protected function sorter($block)
 	{
-		$a = $b = array(); // master array to hold all values
+		$a = array(); // master array to hold all values
 
 		$declarations = explode(';', $block);
 
