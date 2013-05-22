@@ -730,7 +730,7 @@ class CSSqueeze
         {
             $v = $v > 255 ? 255 : $v;
             $v = $v < 16 ? 0 . dechex($v) : dechex($v);
-            $colorTmp{$k] = $v;
+            $colorTmp[$k] = $v;
         }
 
         isset($colorTmp2[1]) && $color = '#' . $colorTmp['red'] . $colorTmp['green'] . $colorTmp['blue'];
