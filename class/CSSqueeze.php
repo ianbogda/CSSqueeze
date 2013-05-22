@@ -912,8 +912,8 @@ class CSSqueeze
 
 		// shorthand properties
 		// font: 1em/1.5em bold italic serif
-		$p[] = "/(font-family):([ -_ a-zA-Z0-9]+);(font-style):({$fontStyle});(font-weight):({$fontWeight});(font-size):([.0-9]+)({$units});(line-height):({$numeric})({$units});/";
-		$r[] = 'font:$8$9/$13$14 $6 $4 $2;';
+		$p[] = "/(font-family):([ -_ a-zA-Z0-9]+);(font-style):({$fontStyle});(font-weight):({$fontWeight});(font-size):(([.0-9]+)({$units})|({$fontSize}));(line-height):({$numeric})({$units});/";
+		$r[] = 'font:$8/$13$14 $6 $4 $2;';
 
 		// background: #fff url(image.gif) no-repeat top left
 		$p[] = '/(background-color):([#a-zA-Z]+);(background-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\));(background-repeat):(repeat|no-repeat|repeat-x|repeat-y|inherit);(background-position):(top|right|bottom|left|center)(\s+)?(top|right|bottom|left|center);/';
