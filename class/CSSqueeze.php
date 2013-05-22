@@ -523,7 +523,8 @@ class CSSqueeze
 		$_css = $this->uniqueArray($selectors, $blocks);
 		$f = strlen($_css_) > strlen($_css) ? $_css : $_css_;
 
-		return $singleLine ? $f : $this->deflat($f);
+        $cssDeflat = $this->deflat($f);
+		return $singleLine ? $f : $cssDeflat;
 	}
 
 	protected function mergeSelectors($selectors, $blocks)
