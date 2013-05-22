@@ -719,29 +719,21 @@ class CSSqueeze
             $color = $colorTmp;
             unset($colorTmp);
         }
-        elseif ($count)
+        if (isset($colorTmp2[1]))
         {
-            $colorTmp = array();
-       		for ($i = 0; $i < $count-1; ++$i)
-	    	{
-                $colorTmp[] = $colorTmp2[$i+1];
-	  	    	$colorTmp[$i] = trim($colorTmp[$i]);
-	   			$colorTmp[$i] = round((255*$colorTmp[$i])/100);
-     			if ($colorTmp[$i]>255) $colorTmp[$i] = 255;
-	     	}
+            $red   = round((255*$colorTmp2[1])/100);
+            $green = round((255*$colorTmp2[2])/100);
+            $blue  = round((255*$colorTmp2[3])/100);
 
-	       	$color = '#';
-    		for ($i = 0; $i < 3; ++$i )
-       		{
-        		if ($colorTmp[$i]<16)
-	   			{
-           			$color .= '0' . dechex($colorTmp[$i]);
-        		}
-    			else
-    	  		{
-    				$color .= dechex($colorTmp[$i]);
-     			}
-            }
+            $red   = $red   > 255 ? 255 : $red;
+            $green = $green > 255 ? 255 : $green;
+            $blue  = $blue  > 255 ? 255 : $blue;
+
+            $red   = $red   < 16 ? 0 . dechex($red)   : dechex($red);
+            $green = $green < 16 ? 0 . dechex($green) : dechex($green);
+            $blue  = $blue  < 16 ? 0 . dechex($blue)  : dechex($blue);
+
+            $color = '#' . $red . $green . $blue;
         }
 
 		// Fix bad color names
