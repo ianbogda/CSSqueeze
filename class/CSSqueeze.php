@@ -720,19 +720,20 @@ class CSSqueeze
         $pattern  = '/rgb\((\d+)\%,\s*(\d+)\%,\s*(\d+)\%\)/e';
         preg_match($pattern, $color, $colorTmp2);
 
-        $red   = isset($colorTmp2[1]) ? round((255*$colorTmp2[1])/100) : 0;
-        $green = isset($colorTmp2[2]) ? round((255*$colorTmp2[2])/100) : 0;
-        $blue  = isset($colorTmp2[3]) ? round((255*$colorTmp2[3])/100) : 0;
+        $colorTmp = array(
+            'red'   => isset($colorTmp2[1]) ? round((255*$colorTmp2[1])/100) : 0,
+            'green' => isset($colorTmp2[2]) ? round((255*$colorTmp2[2])/100) : 0,
+            'blue'  => isset($colorTmp2[3]) ? round((255*$colorTmp2[3])/100) : 0,
+        );
 
-        $red   = $red   > 255 ? 255 : $red;
-        $green = $green > 255 ? 255 : $green;
-        $blue  = $blue  > 255 ? 255 : $blue;
+        foreach ($colorTmp as $k => $v)
+        {
+            $v = $v > 255 ? 255 : $v;
+            $v = $v < 16 ? 0 . dechex($v) : dechex($v);
+            $colorTmp{$k] = $v;
+        }
 
-        $red   = $red   < 16 ? 0 . dechex($red)   : dechex($red);
-        $green = $green < 16 ? 0 . dechex($green) : dechex($green);
-        $blue  = $blue  < 16 ? 0 . dechex($blue)  : dechex($blue);
-
-        isset($colorTmp2[1]) && $color = '#' . $red . $green . $blue;
+        isset($colorTmp2[1]) && $color = '#' . $colorTmp['red'] . $colorTmp['green'] . $colorTmp['blue'];
 
 		// Fix bad color names
 		if (isset($this->replaceColors[$color]))
