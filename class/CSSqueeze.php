@@ -487,8 +487,8 @@ class CSSqueeze
 
 	function __construct()
 	{
-		$this->properties   = array_flip($this->properties  );
-		$this->prop_values  = array_flip($this->prop_values );
+		$this->properties  = array_flip($this->properties );
+		$this->prop_values = array_flip($this->prop_values);
 		$this->colorValues = array_flip($this->colorValues);
 	}
 
@@ -545,7 +545,7 @@ class CSSqueeze
 					}
 					else
 					{
-						$b[$k] = $blocks[$k2];
+						isset($blocks[$k2]) && $b[$k] = $blocks[$k2];
 					}
 				}
 			}
@@ -569,7 +569,7 @@ class CSSqueeze
 		$tokens = count($selectors);
 		for ($i = 0; $i < $tokens; ++$i)
 		{
-			$a[$selectors[$i]] = $blocks[$i];
+			isset($blocks[$i]) && $a[$selectors[$i]] = $blocks[$i];
 		}
 
 		$a = $this->arrayUniqueKeyGroup($a);
@@ -700,36 +700,50 @@ class CSSqueeze
 	protected function cutColor($color)
 	{
 		$color = strtolower($color);
-
 		// rgb(0,0,0) -> #000000 (or #000 in this case later)
-		if ('rgb(' == substr($color,0,4))
+        $substrColor = (string) substr($color, 0, 4);
+		if ('rgb(' == $substrColor)
 		{
-			$colorTmp = substr($color,4,strlen($color)-5);
-			$colorTmp = explode(',',$colorTmp);
-			$c = count($colorTmp);
-			for ($i = 0; $i < $c; ++$i)
-			{
-				$colorTmp[$i] = trim ($colorTmp[$i]);
-				if (substr('%' == $colorTmp[$i],-1))
-				{
-					$colorTmp[$i] = round((255*$colorTmp[$i])/100);
-				}
-				if ($colorTmp[$i]>255) $colorTmp[$i] = 255;
-			}
-			$color = '#';
-			for ($i = 0; $i < 3; ++$i )
-			{
-				if ($colorTmp[$i]<16)
-				{
-					$color .= '0' . dechex($colorTmp[$i]);
-				}
-				else
-				{
-					$color .= dechex($colorTmp[$i]);
-				}
-				unset($colorTmp[$i]);
+            $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
+            $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
+            $colorTmp    = preg_replace($pattern, $replacement, $color);
+            if (false !== strpos($colorTmp, "#"))
+            {
+                $color = $colorTmp;
+                unset($colorTmp);
+            }
+            else
+            {
+                $pattern  = '/rgb\((\d+)\%,\s*(\d+)\%,\s*(\d+)\%\)/e';
+                preg_match($pattern, $color, $colorTmp2);
+    			$c = count($colorTmp2);
+                if (1 < $c)
+                {
+                    $colorTmp = array();
+    	    		for ($i = 0; $i < $c-1; ++$i)
+	    	    	{
+                        $colorTmp[] = $colorTmp2[$i+1];
+		    	    	$colorTmp[$i] = trim($colorTmp[$i]);
+	        			$colorTmp[$i] = round((255*$colorTmp[$i])/100);
+        				if ($colorTmp[$i]>255) $colorTmp[$i] = 255;
+	    	    	}
 
-			}
+		        	$color = '#';
+        			for ($i = 0; $i < 3; ++$i )
+    	    		{
+    		    		if ($colorTmp[$i]<16)
+	        			{
+    		    			$color .= '0' . dechex($colorTmp[$i]);
+         				}
+    	    			else
+    		    		{
+     					$color .= dechex($colorTmp[$i]);
+    	    			}
+    		    	}
+                }
+                var_dump($color);
+            }
+
 		}
 
 		// Fix bad color names
@@ -739,16 +753,9 @@ class CSSqueeze
 		}
 
 		// #aabbcc -> #abc
-		if (7 == strlen($color))
-		{
-			$color_temp = strtolower($color);
-			if ('#' == $color_temp{0} && $color_temp{1} == $color_temp{2} && $color_temp{3} == $color_temp{4} && $color_temp{5} == $color_temp{6})
-			{
-				$color = strtoupper('#'.$color{1}.$color{3}.$color{5});
-			}
-		}
-		elseif (4 == strlen($color)) $color = strtoupper($color);
-		unset($colorTmp);
+        $pattern     = '/^#?([a-h0-9]{2})([a-h0-9]{2})([a-h0-9]{2})$/i';
+        $replacement = '#\\1\\2\\3';
+        $color       = preg_replace($pattern, $replacement, $color);
 
 		switch($color)
 		{
