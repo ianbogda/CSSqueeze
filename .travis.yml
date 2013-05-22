@@ -12,6 +12,5 @@ before-script:
 script:
   - mkdir -p build/logs
   - phpunit --configuration phpunit.xml --coverage-text
-  - php coverage-checker.php clover.xml 85
 after-script:
   - php vendor/bin/coveralls
