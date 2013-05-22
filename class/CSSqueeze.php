@@ -706,35 +706,31 @@ class CSSqueeze
 		// rgb(0,0,0) -> #000000 (or #000 in this case later)
 
         // rgb color
-        $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
-        $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
-        $colorTmp    = preg_replace($pattern, $replacement, $color);
-
-        if (false !== strpos($colorTmp, "#"))
+        if (false !== strpos($color, "rgb("))
         {
-            $color = $colorTmp;
-            unset($colorTmp);
+	        $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
+    	    $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
+        	$colorTmp    = preg_replace($pattern, $replacement, $color);
+		    if (false !== strpos($colorTmp,  "#"))
+			{
+				$color = $colorTmp;
+			}
+	
+	        $pattern     = '/rgb\((\d+)%,\s*(\d+)%,\s*(\d+)%\)/i';
+			$replacement = '\\1,\\2,\\3';
+	        false !== strpos($colorTmp, "rgb(") && $colorTmp2 = explode(',', preg_replace($pattern, $replacement, $colorTmp));
+
+			if (isset($colorTmp2))
+			{
+				foreach($colorTmp2 as $k => $v)
+				{
+					$colorTmp2[$k] = sprintf('%02x', round(255 * $v / 100,0));
+				}
+				$colorTmp2 = '#' . implode('', $colorTmp2);
+		    if (false !== strpos($colorTmp2, "#")) $color = $colorTmp2;
+			}
+
         }
-
-        // rgb color in %a
-        $pattern  = '/rgb\((\d+)\%,\s*(\d+)\%,\s*(\d+)\%\)/e';
-        preg_match($pattern, $color, $colorTmp2);
-
-        $colorTmp = array(
-            'red'   => isset($colorTmp2[1]) ? round((255*$colorTmp2[1])/100) : 0,
-            'green' => isset($colorTmp2[2]) ? round((255*$colorTmp2[2])/100) : 0,
-            'blue'  => isset($colorTmp2[3]) ? round((255*$colorTmp2[3])/100) : 0,
-        );
-
-        foreach ($colorTmp as $k => $v)
-        {
-            $v = $v > 255 ? 255 : $v;
-            $v = $v < 16 ? 0 . dechex($v) : dechex($v);
-            $colorTmp[$k] = $v;
-        }
-
-        isset($colorTmp2[1]) && $color = '#' . $colorTmp['red'] . $colorTmp['green'] . $colorTmp['blue'];
-
 		// Fix bad color names
 		if (isset($this->replaceColors[$color]))
 		{
