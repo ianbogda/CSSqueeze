@@ -618,7 +618,7 @@ class CSSqueeze
 
 	protected function tokenize($lines)
 	{
-		$token = $rules = $selectors = $blocks = array();
+		$rules = $selectors = $blocks = array();
 		$pos = $spos = $bpos = 0;
 
 		$token = strtok((string)$lines, "{}");
