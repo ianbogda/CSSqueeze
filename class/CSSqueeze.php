@@ -671,7 +671,7 @@ class CSSqueeze
 
 				    if (isset($this->colorValues[$property]))
 				    {
-				        $value = $this->cutColor($value);
+				        $value = $this->cutColor(strtolower($value));
 				    }
 				    $a[$property] = $value;
 				}
@@ -699,52 +699,46 @@ class CSSqueeze
 
 	protected function cutColor($color)
 	{
-		$color = strtolower($color);
 		// rgb(0,0,0) -> #000000 (or #000 in this case later)
-        $substrColor = (string) substr($color, 0, 4);
-		if ('rgb(' == $substrColor)
-		{
-            $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
-            $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
-            $colorTmp    = preg_replace($pattern, $replacement, $color);
-            if (false !== strpos($colorTmp, "#"))
-            {
-                $color = $colorTmp;
-                unset($colorTmp);
-            }
-            else
-            {
-                $pattern  = '/rgb\((\d+)\%,\s*(\d+)\%,\s*(\d+)\%\)/e';
-                preg_match($pattern, $color, $colorTmp2);
-    			$c = count($colorTmp2);
-                if (1 < $c)
-                {
-                    $colorTmp = array();
-    	    		for ($i = 0; $i < $c-1; ++$i)
-	    	    	{
-                        $colorTmp[] = $colorTmp2[$i+1];
-		    	    	$colorTmp[$i] = trim($colorTmp[$i]);
-	        			$colorTmp[$i] = round((255*$colorTmp[$i])/100);
-        				if ($colorTmp[$i]>255) $colorTmp[$i] = 255;
-	    	    	}
 
-		        	$color = '#';
-        			for ($i = 0; $i < 3; ++$i )
-    	    		{
-    		    		if ($colorTmp[$i]<16)
-	        			{
-    		    			$color .= '0' . dechex($colorTmp[$i]);
-         				}
-    	    			else
-    		    		{
-     					$color .= dechex($colorTmp[$i]);
-    	    			}
-    		    	}
-                }
-                var_dump($color);
-            }
+        // rgb color
+        $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
+        $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
+        $colorTmp    = preg_replace($pattern, $replacement, $color);
+        // rgb color in %
+        $pattern  = '/rgb\((\d+)\%,\s*(\d+)\%,\s*(\d+)\%\)/e';
+        preg_match($pattern, $color, $colorTmp2);
+        $count = count($colorTmp2);
 
-		}
+        if (false !== strpos($colorTmp, "#"))
+        {
+            $color = $colorTmp;
+            unset($colorTmp);
+        }
+        elseif (1 < $count)
+        {
+            $colorTmp = array();
+       		for ($i = 0; $i < $count-1; ++$i)
+	    	{
+                $colorTmp[] = $colorTmp2[$i+1];
+	  	    	$colorTmp[$i] = trim($colorTmp[$i]);
+	   			$colorTmp[$i] = round((255*$colorTmp[$i])/100);
+     			if ($colorTmp[$i]>255) $colorTmp[$i] = 255;
+	     	}
+
+	       	$color = '#';
+    		for ($i = 0; $i < 3; ++$i )
+       		{
+        		if ($colorTmp[$i]<16)
+	   			{
+           			$color .= '0' . dechex($colorTmp[$i]);
+        		}
+    			else
+    	  		{
+    				$color .= dechex($colorTmp[$i]);
+     			}
+            }
+        }
 
 		// Fix bad color names
 		if (isset($this->replaceColors[$color]))
@@ -753,17 +747,17 @@ class CSSqueeze
 		}
 
 		// #aabbcc -> #abc
-        $pattern     = '/^#?([a-h0-9]{2})([a-h0-9]{2})([a-h0-9]{2})$/i';
-        $replacement = '#\\1\\2\\3';
+        $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
+        $replacement = '#$1$2$3';
         $color       = preg_replace($pattern, $replacement, $color);
 
 		switch($color)
 		{
 			/* color name -> hex code */
 			case 'black'  : return '#000';
-			case 'fuchsia': return '#F0F';
-			case 'white'  : return '#FFF';
-			case 'yellow' : return '#FF0';
+			case 'fuchsia': return '#f0f';
+			case 'white'  : return '#fff';
+			case 'yellow' : return '#ff0';
 
 			/* hex code -> color name */
 			case '#800000': return 'maroon';
@@ -775,10 +769,10 @@ class CSSqueeze
 			case '#008080': return 'teal';
 			case '#c0c0c0': return 'silver';
 			case '#808080': return 'gray';
-			case '#C00'   : return 'red';
+			case '#c00'   : return 'red';
 		}
 
-		return strtolower($color);
+		return $color;
 	}
 
 	// from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
