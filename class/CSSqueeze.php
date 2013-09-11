@@ -719,7 +719,9 @@ class CSSqueeze
                             $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
                             $colorTmp    = preg_replace($pattern, $replacement, $color);
 
-                            (false !== strpos($colorTmp,  "#")) && $color = $colorTmp;
+                            $color = (false !== strpos($colorTmp,  "#"))
+                                ? $colorTmp
+                                : $color;
 
                             $pattern     = '/rgb\((\d+)%,\s*(\d+)%,\s*(\d+)%\)/i';
                             $replacement = '\\1,\\2,\\3';
@@ -736,36 +738,34 @@ class CSSqueeze
                                 }
                                 $colorTmp = '#' . implode('', $colorTmp);
 
-                                (false !== strpos($colorTmp, "#")) && $color = $colorTmp;
+                                $color = (false !== strpos($colorTmp, "#"))
+                                   ? $colorTmp
+                                   : $color;
                             }
 
                             unset ($colorTmp);
                         }
 
                         // Fix bad color names
-                        isset($this->replaceColors[$color]) && $color = $this->replaceColors[$color];
+                        $color = (isset($this->replaceColors[$color]))
+                            ? $this->replaceColors[$color]
+                            : $color;
 
                         // #aabbcc -> #abc
                         $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
                         $replacement = '#$1$2$3';
                         $color       = preg_replace($pattern, $replacement, $color);
 
-                        unset ($pattern, $replacement);
-
                         /* return shortest color name or hexa code */
-                        if (isset($this->shortColor[$color]))
-                        {
-                            $value = $this->shortColor[$color];
-                        }
-                        else
-                        {
-                           $value = $color;
-                        }
-                        unset($color);
+                        $value = (isset($this->shortColor[$color]))
+                            ? $this->shortColor[$color]
+                            : $color;
+
+                        unset($pattern, $replacement, $color);
                     }
+
                     $a[$property] = $value;
                 }
-
             }
         }
 
@@ -776,14 +776,13 @@ class CSSqueeze
         {
             $b[$key] = $a[$key];
         }
-        unset($a);
 
         $block = '';
-        foreach ($b as $k => $v)
+        foreach ($b as $key => $value)
         {
-            $block .= $k .':' . $v . ';';
+            $block .= $key . ':' . $value . ';';
         }
-        unset($b);
+        unset($a, $b);
 
         return $block;
     }
