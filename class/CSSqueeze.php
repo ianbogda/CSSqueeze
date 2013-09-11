@@ -715,41 +715,31 @@ class CSSqueeze
                         // rgb color
                         if (false !== strpos($color, "rgb("))
                         {
-                            $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
-                            $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
-                            $colorTmp    = preg_replace($pattern, $replacement, $color);
+                            $rgb = str_replace('rgb(','', $color);
+                            $rgb = str_replace(')','', $rgb);
 
-                            $color = (false !== strpos($colorTmp,  "#"))
-                                ? $colorTmp
-                                : $color;
-
-                            $pattern     = '/rgb\((\d+)%,\s*(\d+)%,\s*(\d+)%\)/i';
-                            $replacement = '\\1,\\2,\\3';
-                            (false !== strpos($colorTmp, "rgb(")) && $colorTmp = explode(
-                                ',',
-                                preg_replace($pattern, $replacement, $colorTmp)
-                            );
-
-                            if (is_array($colorTmp) )
+                            if (false !== strpos($rgb, '%'))
                             {
-                                foreach($colorTmp as $k => $v)
-                                {
-                                    $colorTmp[$k] = sprintf('%02x', round(255 * $v / 100,0));
-                                }
-                                $colorTmp = '#' . implode('', $colorTmp);
+                                $rgb = str_replace('%','', $rgb);
+                                $rgb = explode(',', $rgb);
 
-                                $color = (false !== strpos($colorTmp, "#"))
-                                   ? $colorTmp
-                                   : $color;
+                                $hex  = sprintf('%02x', round(255 * $rgb[0] / 100,0));
+                                $hex .= sprintf('%02x', round(255 * $rgb[1] / 100,0));
+                                $hex .= sprintf('%02x', round(255 * $rgb[2] / 100,0));
                             }
+                            else
+                            {
+                                $rgb = explode(',', $rgb);
 
-                            unset ($colorTmp);
+                                $hex  = str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
+                                $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
+                                $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+                            }
+                            $color = '#' . $hex;
                         }
 
                         // Fix bad color names
-                        $color = (isset($this->replaceColors[$color]))
-                            ? $this->replaceColors[$color]
-                            : $color;
+                        (isset($this->replaceColors[$color])) && $color = $this->replaceColors[$color];
 
                         // #aabbcc -> #abc
                         $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
