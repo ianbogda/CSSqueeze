@@ -486,6 +486,25 @@ class CSSqueeze
         'richness',
         'speak-punctuation',
         'speak-numeral'
+    ),
+    $shortColor = array(
+        /* color name -> hex code */
+        'black'  => '#000',
+        'fuchsia'=> '#f0f',
+        'white'  => '#fff',
+        'yellow' => '#ff0',
+
+        /* hex code -> color name */
+        '#800000'=> 'maroon',
+        '#ffa500'=> 'orange',
+        '#808000'=> 'olive',
+        '#800080'=> 'purple',
+        '#008000'=> 'green',
+        '#000080'=> 'navy',
+        '#008080'=> 'teal',
+        '#c0c0c0'=> 'silver',
+        '#808080'=> 'gray',
+        '#c00'   => 'red',
     );
 
     function __construct()
@@ -743,31 +762,11 @@ class CSSqueeze
         $replacement = '#$1$2$3';
         $color       = preg_replace($pattern, $replacement, $color);
 
-        /* return shortest color name or hexa code */
-        switch($color)
-        {
-            /* color name -> hex code */
-            case 'black'  : return '#000';
-            case 'fuchsia': return '#f0f';
-            case 'white'  : return '#fff';
-            case 'yellow' : return '#ff0';
-
-            /* hex code -> color name */
-            case '#800000': return 'maroon';
-            case '#ffa500': return 'orange';
-            case '#808000': return 'olive';
-            case '#800080': return 'purple';
-            case '#008000': return 'green';
-            case '#000080': return 'navy';
-            case '#008080': return 'teal';
-            case '#c0c0c0': return 'silver';
-            case '#808080': return 'gray';
-            case '#c00'   : return 'red';
-        }
-
         unset ($pattern, $replacement);
 
-        /* return $color */
+        /* return shortest color name or hexa code */
+        if (isset($this->shortColor[$color])) return $this->shortColor[$color];
+
         return $color;
     }
 
