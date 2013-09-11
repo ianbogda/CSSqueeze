@@ -765,7 +765,7 @@ class CSSqueeze
         unset ($pattern, $replacement);
 
         /* return $color */
-        default       : return $color;
+        return $color;
     }
 
     // from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
