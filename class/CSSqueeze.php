@@ -668,7 +668,7 @@ class CSSqueeze
             $token = strtok('{}');
         }
 
-         $size = count($rules);
+        $size = count($rules);
 
         for ($i = 0; $i < $size; ++$i)
         {
@@ -709,7 +709,59 @@ class CSSqueeze
 
                     if (isset($this->colorValues[$property]))
                     {
-                        $value = $this->cutColor(strtolower($value));
+                        // rgb(0,0,0) -> #000000 (or #000 in this case later)
+                        $color = strtolower($value);
+
+                        // rgb color
+                        if (false !== strpos($color, "rgb("))
+                        {
+                            $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
+                            $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
+                            $colorTmp    = preg_replace($pattern, $replacement, $color);
+
+                            (false !== strpos($colorTmp,  "#")) && $color = $colorTmp;
+
+                            $pattern     = '/rgb\((\d+)%,\s*(\d+)%,\s*(\d+)%\)/i';
+                            $replacement = '\\1,\\2,\\3';
+                            (false !== strpos($colorTmp, "rgb(")) && $colorTmp = explode(
+                                ',',
+                                preg_replace($pattern, $replacement, $colorTmp)
+                            );
+
+                            if (is_array($colorTmp) )
+                            {
+                                foreach($colorTmp as $k => $v)
+                                {
+                                    $colorTmp[$k] = sprintf('%02x', round(255 * $v / 100,0));
+                                }
+                                $colorTmp = '#' . implode('', $colorTmp);
+
+                                (false !== strpos($colorTmp, "#")) && $color = $colorTmp;
+                            }
+
+                            unset ($colorTmp);
+                        }
+
+                        // Fix bad color names
+                        isset($this->replaceColors[$color]) && $color = $this->replaceColors[$color];
+
+                        // #aabbcc -> #abc
+                        $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
+                        $replacement = '#$1$2$3';
+                        $color       = preg_replace($pattern, $replacement, $color);
+
+                        unset ($pattern, $replacement);
+
+                        /* return shortest color name or hexa code */
+                        if (isset($this->shortColor[$color]))
+                        {
+                            $value = $this->shortColor[$color];
+                        }
+                        else
+                        {
+                           $value = $color;
+                        }
+                        unset($color);
                     }
                     $a[$property] = $value;
                 }
@@ -734,56 +786,6 @@ class CSSqueeze
         unset($b);
 
         return $block;
-    }
-
-    protected function cutColor($color)
-    {
-        // rgb(0,0,0) -> #000000 (or #000 in this case later)
-
-        // rgb color
-        if (false !== strpos($color, "rgb("))
-        {
-            $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
-            $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
-            $colorTmp    = preg_replace($pattern, $replacement, $color);
-
-            (false !== strpos($colorTmp,  "#")) && $color = $colorTmp;
-
-            $pattern     = '/rgb\((\d+)%,\s*(\d+)%,\s*(\d+)%\)/i';
-            $replacement = '\\1,\\2,\\3';
-            (false !== strpos($colorTmp, "rgb(")) && $colorTmp = explode(
-                ',',
-                preg_replace($pattern, $replacement, $colorTmp)
-            );
-
-            if (is_array($colorTmp) )
-            {
-                foreach($colorTmp as $k => $v)
-                {
-                    $colorTmp[$k] = sprintf('%02x', round(255 * $v / 100,0));
-                }
-                $colorTmp = '#' . implode('', $colorTmp);
-
-                (false !== strpos($colorTmp, "#")) && $color = $colorTmp;
-            }
-
-            unset ($colorTmp);
-        }
-
-        // Fix bad color names
-        isset($this->replaceColors[$color]) && $color = $this->replaceColors[$color];
-
-        // #aabbcc -> #abc
-        $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
-        $replacement = '#$1$2$3';
-        $color       = preg_replace($pattern, $replacement, $color);
-
-        unset ($pattern, $replacement);
-
-        /* return shortest color name or hexa code */
-        if (isset($this->shortColor[$color])) return $this->shortColor[$color];
-
-        return $color;
     }
 
     protected function compress($f)
