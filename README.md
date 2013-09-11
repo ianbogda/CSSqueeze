@@ -9,6 +9,12 @@ CSSqueeze …
 
 It's a single PHP class licensed under Apache 2 and GPLv2.
 
+PHP
+---
+*  PHP 5.3
+*  PHP 5.4
+*  PHP 5.5
+
 Features
 --------
 
