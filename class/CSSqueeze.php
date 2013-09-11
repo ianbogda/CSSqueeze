@@ -595,7 +595,23 @@ class CSSqueeze
             isset($blocks[$i]) && $a[$selectors[$i]] = $blocks[$i];
         }
 
-        $a = $this->arrayUniqueKeyGroup($a);
+        // from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
+        if (is_array($a))
+        {
+            $temp = array_unique($a);
+            foreach ($a as $key => $val)
+            {
+                $i = array_search($val,$temp);
+                if (!empty($i) && $key != $i)
+                {
+                    $temp[$i.','.$key] = $temp[$i];
+                    unset($temp[$i]);
+                }
+            }
+
+            $a = $temp;
+        } //--> end 0ccol.f tricks
+
         $c = count($a);
         $f = '';
         foreach ($a as $k => $v)
@@ -768,25 +784,6 @@ class CSSqueeze
         if (isset($this->shortColor[$color])) return $this->shortColor[$color];
 
         return $color;
-    }
-
-    // from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
-    protected function arrayUniqueKeyGroup($array)
-    {
-        if (!is_array($array)) return false;
-
-        $temp = array_unique($array);
-        foreach ($array as $key => $val)
-        {
-            $i = array_search($val,$temp);
-            if (!empty($i) && $key != $i)
-            {
-                $temp[$i.','.$key] = $temp[$i];
-                unset($temp[$i]);
-            }
-        }
-
-        return $temp;
     }
 
     protected function compress($f)
