@@ -711,37 +711,37 @@ class CSSqueeze
             $pattern     = '/rgb\((\d+),\s*(\d+),\s*(\d+)\)/e';
             $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
             $colorTmp    = preg_replace($pattern, $replacement, $color);
-            if (false !== strpos($colorTmp,  "#"))
-            {
-                $color = $colorTmp;
-            }
-    
+
+            false !== strpos($colorTmp,  "#") && $color = $colorTmp;
+
             $pattern     = '/rgb\((\d+)%,\s*(\d+)%,\s*(\d+)%\)/i';
             $replacement = '\\1,\\2,\\3';
-            false !== strpos($colorTmp, "rgb(") && $colorTmp2 = explode(',', preg_replace($pattern, $replacement, $colorTmp));
+            false !== strpos($colorTmp, "rgb(") && $colorTmp = explode(
+                ',',
+                preg_replace($pattern, $replacement, $colorTmp)
+            );
 
-            if (isset($colorTmp2))
+            foreach($colorTmp as $k => $v)
             {
-                foreach($colorTmp2 as $k => $v)
-                {
-                    $colorTmp2[$k] = sprintf('%02x', round(255 * $v / 100,0));
-                }
-                $colorTmp2 = '#' . implode('', $colorTmp2);
-            if (false !== strpos($colorTmp2, "#")) $color = $colorTmp2;
+                $colorTmp[$k] = sprintf('%02x', round(255 * $v / 100,0));
             }
+            $colorTmp = '#' . implode('', $colorTmp);
 
+            if (false !== strpos($colorTmp, "#")) $color = $colorTmp;
+
+            unset ($colorTmp);
+            }
         }
+
         // Fix bad color names
-        if (isset($this->replaceColors[$color]))
-        {
-            $color = $this->replaceColors[$color];
-        }
+        isset($this->replaceColors[$color]) && $color = $this->replaceColors[$color];
 
         // #aabbcc -> #abc
         $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
         $replacement = '#$1$2$3';
         $color       = preg_replace($pattern, $replacement, $color);
 
+        /* return shortest color name or hexa code */
         switch($color)
         {
             /* color name -> hex code */
@@ -763,7 +763,10 @@ class CSSqueeze
             case '#c00'   : return 'red';
         }
 
-        return $color;
+        unset ($pattern, $replacement);
+
+        /* return $color */
+        default       : return $color;
     }
 
     // from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
