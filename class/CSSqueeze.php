@@ -712,11 +712,11 @@ class CSSqueeze
             $replacement = '"#" . dechex(\\1) . dechex(\\2) . dechex(\\3)';
             $colorTmp    = preg_replace($pattern, $replacement, $color);
 
-            false !== strpos($colorTmp,  "#") && $color = $colorTmp;
+            (false !== strpos($colorTmp,  "#")) && $color = $colorTmp;
 
             $pattern     = '/rgb\((\d+)%,\s*(\d+)%,\s*(\d+)%\)/i';
             $replacement = '\\1,\\2,\\3';
-            false !== strpos($colorTmp, "rgb(") && $colorTmp = explode(
+            (false !== strpos($colorTmp, "rgb(")) && $colorTmp = explode(
                 ',',
                 preg_replace($pattern, $replacement, $colorTmp)
             );
@@ -727,7 +727,7 @@ class CSSqueeze
             }
             $colorTmp = '#' . implode('', $colorTmp);
 
-            if (false !== strpos($colorTmp, "#")) $color = $colorTmp;
+            (false !== strpos($colorTmp, "#")) && $color = $colorTmp;
 
             unset ($colorTmp);
         }
