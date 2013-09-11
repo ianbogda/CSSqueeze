@@ -690,7 +690,7 @@ class CSSqueeze
 
     protected function sorter($block)
     {
-        $a = array(); // master array to hold all values
+        $array = array(); // master array to hold all values
 
         $declarations = explode(';', $block);
 
@@ -754,25 +754,25 @@ class CSSqueeze
                         unset($pattern, $replacement, $color);
                     }
 
-                    $a[$property] = $value;
+                    $array[$property] = $value;
                 }
             }
         }
 
         // Keep only specified and valid properties (this remove ie hacks)
-        $b = array_intersect_key($this->properties, $a);
+        $brray = array_intersect_key($this->properties, $array);
 
-        foreach ($b as $key => $value)
+        foreach ($brray as $key => $value)
         {
-            $b[$key] = $a[$key];
+            $brray[$key] = $array[$key];
         }
 
         $block = '';
-        foreach ($b as $key => $value)
+        foreach ($brray as $key => $value)
         {
             $block .= $key . ':' . $value . ';';
         }
-        unset($a, $b);
+        unset($array, $brray);
 
         return $block;
     }
