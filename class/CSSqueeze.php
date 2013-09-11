@@ -721,13 +721,15 @@ class CSSqueeze
                 preg_replace($pattern, $replacement, $colorTmp)
             );
 
-            foreach($colorTmp as $k => $v)
-            {
-                $colorTmp[$k] = sprintf('%02x', round(255 * $v / 100,0));
-            }
-            $colorTmp = '#' . implode('', $colorTmp);
+            if (is_array($colorTmp) )
+                foreach($colorTmp as $k => $v)
+                {
+                    $colorTmp[$k] = sprintf('%02x', round(255 * $v / 100,0));
+                }
+                $colorTmp = '#' . implode('', $colorTmp);
 
-            (false !== strpos($colorTmp, "#")) && $color = $colorTmp;
+                (false !== strpos($colorTmp, "#")) && $color = $colorTmp;
+            }
 
             unset ($colorTmp);
         }
