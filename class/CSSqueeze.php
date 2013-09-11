@@ -714,27 +714,24 @@ class CSSqueeze
                         // rgb color
                         if (false !== strpos($color, "rgb("))
                         {
-                            $rgb = str_replace('rgb(','', $color);
-                            $rgb = str_replace(')','', $rgb);
+                            $rgb = preg_replace( array('/rgb\(/', '/\)/'), array('', ''), $color);
+                            $rgb = explode(',', $rgb);
+                            $hex = '#';
 
-                            if (false !== strpos($rgb, '%'))
+                            foreach($rgb as $part)
                             {
-                                $rgb = str_replace('%','', $rgb);
-                                $rgb = explode(',', $rgb);
-
-                                $hex  = sprintf('%02x', round(255 * $rgb[0] / 100,0));
-                                $hex .= sprintf('%02x', round(255 * $rgb[1] / 100,0));
-                                $hex .= sprintf('%02x', round(255 * $rgb[2] / 100,0));
+                                if (false !== strpos($rgb[0], '%'))
+                                {
+                                   $part = str_replace('%','', $part);
+                                   
+                                   $hex .= sprintf('%02x', round(255 * $part / 100,0));
+                                }
+                                else
+                                {
+                                    $hex .= str_pad(dechex($part), 2, "0", STR_PAD_LEFT);
+                                }
                             }
-                            else
-                            {
-                                $rgb = explode(',', $rgb);
-
-                                $hex  = str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
-                                $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
-                                $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
-                            }
-                            $color = '#' . $hex;
+                            $color = $hex;
                         }
 
                         // Fix bad color names
