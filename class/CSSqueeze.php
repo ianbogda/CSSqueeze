@@ -730,7 +730,6 @@ class CSSqueeze
             if (false !== strpos($colorTmp, "#")) $color = $colorTmp;
 
             unset ($colorTmp);
-            }
         }
 
         // Fix bad color names
