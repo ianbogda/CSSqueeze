@@ -612,6 +612,7 @@ class CSSqueeze
             $a = $temp;
         } //--> end 0ccol.f tricks
 
+        $c = count($a);
         $f = '';
         foreach ($a as $k => $v)
         {
@@ -741,12 +742,9 @@ class CSSqueeze
                         (isset($this->replaceColors[$color])) && $color = $this->replaceColors[$color];
 
                         // #aabbcc -> #abc
-                        if (7 == strlen($color)
-                            && $color[1] === $color[2]
-                            && $color[3] === $color[4]
-                            && $color[5] === $color[6]
-                        )
-					    $color = '#' . $color[1] . $color[3] . $color[5];
+                        $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
+                        $replacement = '#$1$2$3';
+                        $color       = preg_replace($pattern, $replacement, $color);
 
                         /* return shortest color name or hexa code */
                         $value = (isset($this->shortColor[$color]))
