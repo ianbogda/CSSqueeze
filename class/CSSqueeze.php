@@ -722,6 +722,7 @@ class CSSqueeze
             );
 
             if (is_array($colorTmp) )
+            {
                 foreach($colorTmp as $k => $v)
                 {
                     $colorTmp[$k] = sprintf('%02x', round(255 * $v / 100,0));
