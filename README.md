@@ -1,7 +1,10 @@
 CSSqueeze: Efficient CSS minification in PHP
 ==================================================
 
-[![Build Status](https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master)](https://travis-ci.org/ianbogda/CSSqueeze) [![Coverage Status](https://coveralls.io/repos/ianbogda/CSSqueeze/badge.png)](https://coveralls.io/r/ianbogda/CSSqueeze) [![build status](http://ci.cdg46.fr/projects/1/status.png?ref=master)](http://ci.cdg46.fr/projects/1?ref=master)
+*  [![Build Status](https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master)](https://travis-ci.org/ianbogda/CSSqueeze)
+*  [![Coverage Status](https://coveralls.io/repos/ianbogda/CSSqueeze/badge.png)](https://coveralls.io/r/ianbogda/CSSqueeze)
+*  [![Code Coverage](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/coverage.png?s=dac1996f32de040657203c458bd96aea79b390c7)](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/)
+*  [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/quality-score.png?s=484130f5adab9ca8ce1dfab522a52406c0b336e2)](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/)
 
 CSSqueeze …
 
