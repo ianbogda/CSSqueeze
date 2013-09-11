@@ -679,12 +679,11 @@ class CSSqueeze
         $declarations = explode(';', $block);
 
         // loop through each style and split apart the key from the value
-        $count = count($declarations);
-        for ($i = 0; $i < $count; ++$i)
+        foreach($declarations as $declaration)
         {
-            if ('' !== $declarations[$i])
+            if ('' !== $declaration)
             {
-                $propertyValue = explode(':', $declarations[$i]);
+                $propertyValue = explode(':', $declaration);
 
                 // build the master css tree
                 if (isset($propertyValue[1]))
@@ -698,6 +697,7 @@ class CSSqueeze
                     }
                     $a[$property] = $value;
                 }
+
             }
         }
 
