@@ -4,7 +4,7 @@ use Patchwork;
 
 class CSSqueezeTest extends \PHPUnit_Framework_TestCase
 {
-    function testCSSqueezeRemove()
+    public function testCSSqueezeRemove()
     {
         $xfail= 0;
         $files = array(
@@ -27,7 +27,7 @@ class CSSqueezeTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    function testCSSqueezeColors()
+    public function testCSSqueezeColors()
     {
         $xfail= 0;
         $files = array(
@@ -49,7 +49,7 @@ class CSSqueezeTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    function testCSSqueezeHacks()
+    public function testCSSqueezeHacks()
     {
         $xfail= 0;
         $files = array(
@@ -72,7 +72,7 @@ class CSSqueezeTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    function testCSSqueezesReduce()
+    public function testCSSqueezesReduce()
     {
         $xfail= 0;
         $files = array(
