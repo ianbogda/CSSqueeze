@@ -18,8 +18,11 @@ class CSSqueeze
 {
     protected
 
+    /** @var boolean $keepHack keep /or not css hacks */
     $keepHack       = true,
+    /** @var array[] $units array css units */
     $units          = array('in','cm','mm','pt','pc','px','rem','em','%','ex','gd','vw','vh','vm','deg','grad','rad','ms','s','khz','hz'),
+    /** @var array[] $prop_values array of css properties values */
     $prop_values    = array(
         'background',       'background-position', 'background-size',
         'border',           'border-top',          'border-right',      'border-bottom',       'border-left', 'border-width',
@@ -30,18 +33,23 @@ class CSSqueeze
         'padding-right',    'padding-bottom',      'padding-left',      'perspective',         'right',       'top',
         'text-indent',      'letter-spacing',      'word-spacing',      'width',
     ),
+    /** @var array[] $fontSize array of css fontsize */
     $fontSize       = array('xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'inherit'),
+    /** @var array[] $fontStyle array of css font style */
     $fontStyle      = array('normal', 'italic', 'oblique', 'inherit'),
+    /** @var array[] $colorValues array of css color values */
     $colorValues   = array(
         'background-color', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color',
         'border-left-color', 'color',       'outline-color',    'column-rule-color',
     ),
+    /** @var array[] $listeStyleType array of css liste style type */
     $listeStyleType = array(
         'armenian',       'circle',      'cjk-ideographic', 'decimal',        'decimal-leading-zero', 'disc',
         'georgian',       'hebrew',      'hiragana',        'hiragana-iroha', 'inherit',              'katakana',
         'katakana-iroha', 'lower-alpha', 'lower-greek',     'lower-latin',    'lower-roman',          'none',
         'square',         'upper-alpha', 'upper-latin',     'upper-roman',
     ),
+    /** @var array[] $replaceColors array of css replace naming to hexa colors */
     $replaceColors =  array(
         'aliceblue'         => '#F0F8FF', 'antiquewhite'         => '#FAEBD7', 'aquamarine'      => '#7FFFD4',
         'azure'             => '#F0FFFF', 'beige'                => '#F5F5DC', 'bisque'          => '#FFE4C4',
@@ -86,6 +94,7 @@ class CSSqueeze
         'turquoise'         => '#40E0D0', 'violet'               => '#EE82EE', 'violetred'       => '#D02090',
         'wheat'             => '#F5DEB3', 'whitesmoke'           => '#F5F5F5', 'yellowgreen'     => '#9ACD32'
     ),
+    /** @var array[] $shortColor array of css shorthands */
     $shorthands = array(
         'border-color'  => array('border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',),
         'border-style'  => array('border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',),
@@ -95,7 +104,9 @@ class CSSqueeze
         'padding'       => array('padding-top',      'padding-right',      'padding-bottom',      'padding-left',),
         'border-radius' => 0
     ),
+    /** @var array[] $shortColor array of css font weight */
     $fontWeight = array('normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'inherit'),
+    /** @var array[] $shortColor array of css properties */
     $properties = array(
         'position',
         'top',
@@ -487,6 +498,7 @@ class CSSqueeze
         'speak-punctuation',
         'speak-numeral'
     ),
+    /** @var array[] $shortColor array of short colors */
     $shortColor = array(
         /* color name -> hex code */
         'black'  => '#000',
@@ -515,18 +527,14 @@ class CSSqueeze
     }
 
     /**
-     * Squeezes a Cascade Style Sheet source code.
-     *
-     * Set $singleLine to false if you want optional
-     * semi-colons to be replaced by line feeds.
-     *
-     * Set $sort to false if you doesn't want sort your properties.
-     *
-     * Example:
-     * $parser = new CSSqueeze;
-     * $squeezed_css = $parser->squeeze($fat_css);
-     */
-
+    * Squeezes a Cascade Style Sheet source code.
+    *
+    * @param string  $css        css to consume.
+    * @param bool    $singleLine compress /or not css.
+    * @param bool    $keepHack   keep /or not css hacks.
+    *
+    * @return string Returns the final css.
+    */
     function squeeze($css, $singleLine = true, $keepHack = true)
     {
         $css = trim($css);
@@ -549,6 +557,14 @@ class CSSqueeze
         return $singleLine ? $f : $cssDeflat;
     }
 
+    /**
+    * Merge selectors.
+    *
+    * @param array[] $selectors Array of css selectors.
+    * @param array[] $blocks    Array of css blocks.  .
+    *
+    * @return array[] Returns array of $slectors and $blocks.
+    */
     protected function mergeSelectors($selectors, $blocks)
     {
         // merge same selectors //
@@ -585,6 +601,14 @@ class CSSqueeze
         return array($selectors, $blocks);
     }
 
+    /**
+    * unique array (remove duplicates).
+    *
+    * @param array[] $selectors Array of css selectors.
+    * @param array[] $blocks    Array of css blocks.  .
+    *
+    * @return array[] Returns array of $slectors and $blocks.
+    */
     protected function uniqueArray($selectors, $blocks)
     {
         // Prepare to have unique array
@@ -622,38 +646,54 @@ class CSSqueeze
         return $this->compress($f);
     }
 
-    // from http://minify.googlecode.com/svn/trunk/min/lib/Minify/CSS/Compressor.php
+    /**
+    * Prepare comments.
+    *
+    * @param string $css full css.
+    *
+    * @return string Returns css uncommented.
+    */
     protected function prepareComments($css)
     {
-        $p = $r = array();
+        // from http://minify.googlecode.com/svn/trunk/min/lib/Minify/CSS/Compressor.php
+        $pattern = $replacement = array();
 
         if ($this->keepHack)
         {
             // preserve empty comment after '>'
             // http://www.webdevout.net/css-hacks#in_css-selectors
-            $p[] = '@>/\\*\\s*\\*/@';
-            $r[] = '>/*keep*/';
+            $pattern[]     = '@>/\\*\\s*\\*/@';
+            $replacement[] = '>/*keep*/';
 
             // preserve empty comment between property and value
             // http://css-discuss.incutio.com/?page=BoxModelHack
-            $p[] = '@/\\*\\s*\\*/\\s*:@';
-            $r[] = '/*keep*/:';
+            $pattern[]     = '@/\\*\\s*\\*/\\s*:@';
+            $replacement[] = '/*keep*/:';
 
-            $p[] = '@:\\s*/\\*\\s*\\*/@';
-            $r[] = ':/*keep*/';
+            $pattern[]     = '@:\\s*/\\*\\s*\\*/@';
+            $replacement[] = ':/*keep*/';
 
             // prevent triggering IE6 bug: http://www.crankygeek.com/ie6pebug/
-            $p[] = '/:first-l(etter|ine)\\{/';
-            $r[] = ':first-l$1 {';
+            $pattern[]     = '/:first-l(etter|ine)\\{/';
+            $replacement[] = ':first-l$1 {';
         }
 
         /* remove comments but keep importants one */
-        $p[] = '#\/\*[^\!].*\*\/#isU';
-        $r[] = '';
+        $pattern[]     = '#\/\*[^\!].*\*\/#isU';
+        $replacement[] = '';
 
-        return preg_replace($p, $r, $css);
+        return preg_replace($pattern, $replacement, $css);
     }
 
+    /**
+    * Tokenize Cascade Style Sheet source code.
+    *
+    * @param string  $lines      css to consume.
+    * @param bool    $singleLine compress /or not css.
+    * @param bool    $keepHack   keep /or not css hacks.
+    *
+    * @return string Returns the final css.
+    */
     protected function tokenize($lines)
     {
         $rules = $selectors = $blocks = array();
@@ -688,6 +728,13 @@ class CSSqueeze
         return array($selectors, $blocks);
     }
 
+    /**
+    * Sorter blocks
+    *
+    * @param array[] $block      css to consume.
+    *
+    * @return array[] Returns block sorted.
+    */
     protected function sorter($block)
     {
         $a = array(); // master array to hold all values
@@ -777,111 +824,133 @@ class CSSqueeze
         return $block;
     }
 
-    protected function compress($f)
+    /**
+    * Compress css
+    *
+    * @param string $css css to consume.
+    *
+    * @return string Returns css compressed.
+    */
+    protected function compress($css)
     {
-        $f = $this->shortand($f);
-        $p = $r = array();
+        $css = $this->shortand($css);
+        $pattern = $replacement = array();
 
         $units = implode('|', $this->units);
 
         // minimize hex colors
-        $p[] = '/([^=])#([a-f\\d])\\2([a-f\\d])\\3([a-f\\d])\\4([\\s;\\}])/i';
-        $r[] = '$1#$2$3$4$5';
+        $pattern[]     = '/([^=])#([a-f\\d])\\2([a-f\\d])\\3([a-f\\d])\\4([\\s;\\}])/i';
+        $replacement[] = '$1#$2$3$4$5';
 
         /* 0.1em => .1em */
-        $p[] = "#(-?)0\.(\d+({$units}))#";
-        $r[] = '$1.$2';
+        $pattern[]     = "#(-?)0\.(\d+({$units}))#";
+        $replacement[] = '$1.$2';
 
         /* 0px => 0 */
-        $p[] = "#([\s]|:)0({$units})#";
-        $r[] = '${1}0';
+        $pattern[]     = "#([\s]|:)0({$units})#";
+        $replacement[] = '${1}0';
 
         /* 0 0 0 0 | 0 0 0 | 0 0 => 0 */
-        $p[] = "#:0 0 0 0;#";
-        $r[] = ':0;';
-        $p[] = "#:0 0 0;#";
-        $r[] = ':0;';
-        $p[] = "#:0 0;#";
-        $r[] = ':0;';
+        $pattern[]     = "#:0 0 0 0;#";
+        $replacement[] = ':0;';
+        $pattern[]     = "#:0 0 0;#";
+        $replacement[] = ':0;';
+        $pattern[]     = "#:0 0;#";
+        $replacement[] = ':0;';
 
         /* Removing unnecessary decimal*/
-        $p[] = "#:(([^;]*-?[0-9]*)\.|([^;]*-?[0-9]*\.[1-9]+))0+({$units})([^;]*);#";
-        $r[] = ':$2$3$4$5;';
+        $pattern[]     = "#:(([^;]*-?[0-9]*)\.|([^;]*-?[0-9]*\.[1-9]+))0+({$units})([^;]*);#";
+        $replacement[] = ':$2$3$4$5;';
 
         /* remove empty selectors */
-        $p[] = '#([^}]+){}#isU';
-        $r[] = '';
+        $pattern[]     = '#([^}]+){}#isU';
+        $replacement[] = '';
 
         /* remove tabs, spaces, newlines, etc. */
-        $p[] = '`\A[ \t]*\r?\n|\r?\n[ \t]*\Z`';
-        $r[] = '';
-        $p[] = '/^\/\*(\r\n|\r|\n|\t|\s\s+)/';
-        $r[] = '';
-        $p[] = '/(\*\/)\r?\n?/';
-        $r[] = '$1';
+        $pattern[]     = '`\A[ \t]*\r?\n|\r?\n[ \t]*\Z`';
+        $replacement[] = '';
+        $pattern[]     = '/^\/\*(\r\n|\r|\n|\t|\s\s+)/';
+        $replacement[] = '';
+        $pattern[]     = '/(\*\/)\r?\n?/';
+        $replacement[] = '$1';
 
         // Fix url()
-        $p[] = '#(url|rgba|rgb|hsl|hsla|attr)\((.*)\)(\S)#isU';
-        $r[] = '$1($2) $3';
+        $pattern[]     = '#(url|rgba|rgb|hsl|hsla|attr)\((.*)\)(\S)#isU';
+        $replacement[] = '$1($2) $3';
 
         /* remove whitespace around operators */
-        $p[] = '/(?<=[\[\(>+=]|=[=~^$*|>+\]\)])/';
-        $r[] = '';
+        $pattern[]     = '/(?<=[\[\(>+=]|=[=~^$*|>+\]\)])/';
+        $replacement[] = '';
 
         /* remove whitespace on both sides of colons znd operators : >=[]~ */
-        $p[] = '/\s?(\:|\>|=|\[|\]|~)\s?/';
-        $r[] = '$1';
+        $pattern[]     = '/\s?(\:|\>|=|\[|\]|~)\s?/';
+        $replacement[] = '$1';
 
         /* remove whitespace on both sides of curly brackets {} */
-        $p[] = '/\s?\{\s?/';
-        $r[] = '{';
-        $p[] = '/\W\s?\}\W\s?/';
-        $r[] = '}';
+        $pattern[]     = '/\s?\{\s?/';
+        $replacement[] = '{';
+        $pattern[]     = '/\W\s?\}\W\s?/';
+        $replacement[] = '}';
 
         /* remove whitespace on both sides of commas , */
-        $p[] = '/\s?\,\s?/';
-        $r[] = ',';
+        $pattern[]     = '/\s?\,\s?/';
+        $replacement[] = ',';
 
         /* remove multi semi-colons */
-        $p[] = '/;+/';
-        $r[] = ';';
+        $pattern[]     = '/;+/';
+        $replacement[] = ';';
 
         /* remove semi-colons before closing curly bracket } */
-        $p[] = '/;\}/';
-        $r[] = '}';
+        $pattern[]     = '/;\}/';
+        $replacement[] = '}';
         
-        return preg_replace($p, $r, $f);
+        return preg_replace($pattern, $replacement, $css);
     }
 
-    protected function deflat($f, $indent = '')
+    /**
+    * Deflat compressed css
+    *
+    * @param string $css    compressed css to consume.
+    * @param string $indent string indent
+    *
+    * @return string Returns css defalted.
+    */
+    protected function deflat($css, $indent = '')
     {
-        $f = $this->shortand($f);
-        $p = $r = array();
+        $css = $this->shortand($css);
+        $pattern = $replacement = array();
 
         /* add semicolon before curly bracket } and newline after */
-        $p[] = '/([}])/';
-        $r[] = ";$1\n\n";
+        $pattern[]     = '/([}])/';
+        $replacement[] = ";$1\n\n";
 
         /* add whitespace before curly bracket { */
-        $p[] = '/([{])/';
-        $r[] = " $1\n";
+        $pattern[]     = '/([{])/';
+        $replacement[] = " $1\n";
 
         /* add newlines after semicolons ; */
-        $p[] = '/([;])/';
-        $r[] = "$1\n";
+        $pattern[]     = '/([;])/';
+        $replacement[] = "$1\n";
 
         if ($indent)
         {
-            $p[] = '/((.*):(.*))/';
-            $r[] = $indent . '$1';
+            $pattern[]     = '/((.*):(.*))/';
+            $replacement[] = $indent . '$1';
         }
 
-        return preg_replace($p, $r, $f);
+        return preg_replace($pattern, $replacement, $css);
     }
 
-    protected function shortand($f)
+    /**
+    * shorthand
+    *
+    * @param string $css    compressed css to consume.
+    *
+    * @return string Returns css defalted.
+    */
+    protected function shortand($css)
     {
-        $p = $r = array();
+        $pattern = $replacement = array();
         $units      = implode('|', $this->units     );
         $fontSize   = implode('|', $this->fontSize  );
         $fontStyle  = implode('|', $this->fontStyle );
@@ -894,36 +963,43 @@ class CSSqueeze
 
         // shorthand properties
         // font: 1em/1.5em bold italic serif
-        $p[] = "/(font-family):([ -_ a-zA-Z0-9]+);(font-style):({$fontStyle});(font-weight):({$fontWeight});(font-size):(([.0-9]+)({$units})|({$fontSize}));(line-height):({$numeric})({$units});/";
-        $r[] = 'font:$8/$13$14 $6 $4 $2;';
+        $pattern[]     = "/(font-family):([ -_ a-zA-Z0-9]+);(font-style):({$fontStyle});" .
+                             "(font-weight):({$fontWeight});(font-size):(([.0-9]+)({$units})|({$fontSize}));" .
+                             "(line-height):({$numeric})({$units});/";
+        $replacement[] = 'font:$8/$13$14 $6 $4 $2;';
 
         // background: #fff url(image.gif) no-repeat top left
-        $p[] = '/(background-color):([#a-zA-Z]+);(background-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\));(background-repeat):(repeat|no-repeat|repeat-x|repeat-y|inherit);(background-position):(top|right|bottom|left|center)(\s+)?(top|right|bottom|left|center);/';
-        $r[] = 'background:$2 $4 $6 $8 $10;';
+        $pattern[]     = '/(background-color):([#a-zA-Z]+);(background-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\));' .
+                             '(background-repeat):(repeat|no-repeat|repeat-x|repeat-y|inherit);' .
+                             '(background-position):(top|right|bottom|left|center)(\s+)?(top|right|bottom|left|center);/';
+        $replacement[] = 'background:$2 $4 $6 $8 $10;';
 
         foreach ($this->shorthands as $k => $v)
         {
             // (margin|padding|border): 2px 1px 3px 4px (top, right, bottom, left)
-            $p[] = "/({$k}-top):(({$numeric})({$units}));({$k}-right):(({$numeric})({$units}));({$k}-bottom):(({$numeric})({$units}));({$k}-left):(({$numeric})({$units}));/";
-            $r[] = "{$k}:$2 $8 $14 $20;";
+            $pattern[]     = "/({$k}-top):(({$numeric})({$units}));({$k}-right):(({$numeric})({$units}));" .
+                                 "({$k}-bottom):(({$numeric})({$units}));({$k}-left):(({$numeric})({$units}));/";
+            $replacement[] = "{$k}:$2 $8 $14 $20;";
 
         }
 
         //  list-style: disc outside url(image.gif)
         $position = implode('|', $this->listeStyleType);
-        $p[] = "/(liste-style):([#a-zA-Z]+);(liste-style-type):({$position});(liste-style-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\)|none|inherit);(liste-style-position):(inside|outside|inherit);/";
-        $r[] = 'liste-style:$2 $4 $7 $9;';
+        $pattern[]     = "/(liste-style):([#a-zA-Z]+);(liste-style-type):({$position});" .
+                             "(liste-style-image):(url\([-_a-zA-Z0-9]+.[a-zA-Z]+\)|none|inherit);" .
+                             "(liste-style-position):(inside|outside|inherit);/";
+        $replacement[] = 'liste-style:$2 $4 $7 $9;';
 
         // 1px 1px 1px 1px => 1px
-        $p[] = "#{$property}({$parameter})" . '\s\5\s\5\s\5' . "{$important};#";
-        $r[] = '$1$5$10;';
+        $pattern[]     = "#{$property}({$parameter})" . '\s\5\s\5\s\5' . "{$important};#";
+        $replacement[] = '$1$5$10;';
         // 1px 2px 1px 2px => 1px 2px
-        $p[] ="#{$property}({$parameter}\s)({$parameter})" . '\s\5\10' . "{$important};#";
-        $r[] = '$1$5$10$15;';
+        $pattern[]     ="#{$property}({$parameter}\s)({$parameter})" . '\s\5\10' . "{$important};#";
+        $replacement[] = '$1$5$10$15;';
         // 1px 2px 3px 2px => 1px 2px 3px
-        $p[] = "#{$property}({$parameter}\s)({$parameter})\s({$parameter})" . '\s\10' . "{$important};#";
-        $r[] = '$1$5$10 $15$20;';
+        $pattern[]     = "#{$property}({$parameter}\s)({$parameter})\s({$parameter})" . '\s\10' . "{$important};#";
+        $replacement[] = '$1$5$10 $15$20;';
 
-        return preg_replace($p, $r, $f);
+        return preg_replace($pattern, $replacement, $css);
     }
 }
