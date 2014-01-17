@@ -586,22 +586,15 @@ class CSSqueeze
         // merge same selectors //
         $b = array();
         $a = array_count_values($selectors);
-        
+
         foreach ($a as $k => $v)
         {
             reset($selectors);
             while (list($k2, $v2) = each($selectors))
             {
-                if ($v2 == $k)
+                if ($v2 == $k && isset($blocks[$k2]))
                 {
-                    if (isset($b[$k]))
-                    {
-                        $b[$k] .= $blocks[$k2];
-                    }
-                    else
-                    {
-                        isset($blocks[$k2]) && $b[$k] = $blocks[$k2];
-                    }
+                    $b[$k] = (isset($b[$k])) ? ($b[$k] . $blocks[$k2]) : $blocks[$k2];
                 }
             }
         }
@@ -765,8 +758,9 @@ class CSSqueeze
                 $propertyValue = explode(':', $declaration);
 
                 // build the master css tree
-                if (isset($propertyValue[1]))
+                switch(isset($propertyValue[1]))
                 {
+                case true:
                     $property = trim(strtolower($propertyValue[0]));
                     $value    = trim($propertyValue[1]);
 
@@ -776,29 +770,32 @@ class CSSqueeze
                         $color = strtolower($value);
 
                         // rgb color
-                        if (false !== strpos($color, "rgb("))
+                        switch (true)
                         {
+                        case (false !== strpos($color, "rgb(")):
                             $rgb = str_replace('rgb(','', $color);
                             $rgb = str_replace(')','', $rgb);
 
-                            if (false !== strpos($rgb, '%'))
+                            switch(true)
                             {
+                            case (false !== strpos($rgb, '%')):
                                 $rgb = str_replace('%','', $rgb);
                                 $rgb = explode(',', $rgb);
 
                                 $hex  = sprintf('%02x', round(255 * $rgb[0] / 100,0));
                                 $hex .= sprintf('%02x', round(255 * $rgb[1] / 100,0));
                                 $hex .= sprintf('%02x', round(255 * $rgb[2] / 100,0));
-                            }
-                            else
-                            {
+                                break;
+                            default:
                                 $rgb = explode(',', $rgb);
 
                                 $hex  = str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
                                 $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
                                 $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+                                break;
                             }
                             $color = '#' . $hex;
+                            break;
                         }
 
                         // Fix bad color names
@@ -919,7 +916,7 @@ class CSSqueeze
         /* remove semi-colons before closing curly bracket } */
         $pattern[]     = '/;\}/';
         $replacement[] = '}';
-        
+
         return preg_replace($pattern, $replacement, $css);
     }
 
