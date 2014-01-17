@@ -16,14 +16,17 @@ use Patchwork;
 
 class CSSqueeze
 {
-    protected
-
     /** @var boolean $keepHack keep /or not css hacks */
-    $keepHack       = true,
+    protected $keepHack = true;
+
     /** @var array[] $units array css units */
-    $units          = array('in','cm','mm','pt','pc','px','rem','em','%','ex','gd','vw','vh','vm','deg','grad','rad','ms','s','khz','hz'),
+    protected $units = array('in', 'cm',  'mm', 'pt','pc','px', 'rem',
+                             'em', '%',   'ex', 'gd','vw','vh', 'vm',
+                             'deg','grad','rad','ms','s', 'khz','hz'
+    );
+
     /** @var array[] $prop_values array of css properties values */
-    $prop_values    = array(
+    protected $prop_values = array(
         'background',       'background-position', 'background-size',
         'border',           'border-top',          'border-right',      'border-bottom',       'border-left', 'border-width',
         'border-top-width', 'border-right-width',  'border-left-width', 'border-bottom-width', 'bottom',      'border-spacing',
@@ -32,25 +35,32 @@ class CSSqueeze
         'min-height',       'min-width',           'outline',           'outline-width',       'padding',     'padding-top',
         'padding-right',    'padding-bottom',      'padding-left',      'perspective',         'right',       'top',
         'text-indent',      'letter-spacing',      'word-spacing',      'width',
-    ),
+    );
+
     /** @var array[] $fontSize array of css fontsize */
-    $fontSize       = array('xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'inherit'),
+    protected $fontSize  = array('xx-small', 'x-small',  'small',   'medium', 'large',
+                                 'x-large',  'xx-large', 'smaller', 'larger', 'inherit'
+    );
+
     /** @var array[] $fontStyle array of css font style */
-    $fontStyle      = array('normal', 'italic', 'oblique', 'inherit'),
+    protected $fontStyle = array('normal', 'italic', 'oblique', 'inherit');
+
     /** @var array[] $colorValues array of css color values */
-    $colorValues   = array(
+    protected $colorValues = array(
         'background-color', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color',
         'border-left-color', 'color',       'outline-color',    'column-rule-color',
-    ),
+    );
+
     /** @var array[] $listeStyleType array of css liste style type */
-    $listeStyleType = array(
+    protected $listeStyleType = array(
         'armenian',       'circle',      'cjk-ideographic', 'decimal',        'decimal-leading-zero', 'disc',
         'georgian',       'hebrew',      'hiragana',        'hiragana-iroha', 'inherit',              'katakana',
         'katakana-iroha', 'lower-alpha', 'lower-greek',     'lower-latin',    'lower-roman',          'none',
         'square',         'upper-alpha', 'upper-latin',     'upper-roman',
-    ),
+    );
+
     /** @var array[] $replaceColors array of css replace naming to hexa colors */
-    $replaceColors =  array(
+    protected $replaceColors =  array(
         'aliceblue'         => '#F0F8FF', 'antiquewhite'         => '#FAEBD7', 'aquamarine'      => '#7FFFD4',
         'azure'             => '#F0FFFF', 'beige'                => '#F5F5DC', 'bisque'          => '#FFE4C4',
         'blanchedalmond'    => '#FFEBCD', 'blueviolet'           => '#8A2BE2', 'brown'           => '#A52A2A',
@@ -93,9 +103,10 @@ class CSSqueeze
         'tan'               => '#D2B48C', 'thistle'              => '#D8BFD8', 'tomato'          => '#FF6347',
         'turquoise'         => '#40E0D0', 'violet'               => '#EE82EE', 'violetred'       => '#D02090',
         'wheat'             => '#F5DEB3', 'whitesmoke'           => '#F5F5F5', 'yellowgreen'     => '#9ACD32'
-    ),
+    );
+
     /** @var array[] $shortColor array of css shorthands */
-    $shorthands = array(
+    protected $shorthands = array(
         'border-color'  => array('border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',),
         'border-style'  => array('border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',),
         'border-width'  => array('border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',),
@@ -103,11 +114,15 @@ class CSSqueeze
         'margin'        => array('margin-top',       'margin-right',       'margin-bottom',       'margin-left',),
         'padding'       => array('padding-top',      'padding-right',      'padding-bottom',      'padding-left',),
         'border-radius' => 0
-    ),
+    );
+
     /** @var array[] $shortColor array of css font weight */
-    $fontWeight = array('normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'inherit'),
+    protected $fontWeight = array('normal', 'bold', 'bolder', 'lighter', '100', '200', '300', 
+                                  '400',    '500',   '600', '  700',     '800', '900', 'inherit'
+    );
+
     /** @var array[] $shortColor array of css properties */
-    $properties = array(
+    protected $properties = array(
         'position',
         'top',
         'right',
@@ -497,9 +512,10 @@ class CSSqueeze
         'richness',
         'speak-punctuation',
         'speak-numeral'
-    ),
+    );
+
     /** @var array[] $shortColor array of short colors */
-    $shortColor = array(
+    protected $shortColor = array(
         /* color name -> hex code */
         'black'  => '#000',
         'fuchsia'=> '#f0f',
