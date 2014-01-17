@@ -592,9 +592,11 @@ class CSSqueeze
             reset($selectors);
             while (list($k2, $v2) = each($selectors))
             {
-                if ($v2 == $k && isset($blocks[$k2]))
+                if ($v2 != $k) continue;
+                switch (true)
                 {
-                    $b[$k] = (isset($b[$k])) ? ($b[$k] . $blocks[$k2]) : $blocks[$k2];
+                case (isset($b[$k]))       : $b[$k] .= $blocks[$k2]; break;
+                case (isset($blocks[$k2])) : $b[$k]  = $blocks[$k2]; break;
                 }
             }
         }
