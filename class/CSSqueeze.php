@@ -535,7 +535,7 @@ class CSSqueeze
         '#c00'   => 'red',
     );
 
-    function __construct()
+    public function __construct()
     {
         $this->properties  = array_flip($this->properties );
         $this->prop_values = array_flip($this->prop_values);
@@ -551,7 +551,7 @@ class CSSqueeze
     *
     * @return string Returns the final css.
     */
-    function squeeze($css, $singleLine = true, $keepHack = true)
+    public function squeeze($css, $singleLine = true, $keepHack = true)
     {
         $css = trim($css);
         if ('' === $css) return '';
