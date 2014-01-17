@@ -631,27 +631,27 @@ class CSSqueeze
         }
 
         // from 0cool.f > http://php.net/manual/fr/function.array-unique.php#104102
-        if (is_array($a))
+        $temp = array_unique($a);
+        reset ($a);
+        while (list($key, $value) = each($a))
         {
-            $temp = array_unique($a);
-            foreach ($a as $key => $val)
+            $i = array_search($value, $temp);
+            if (!empty($i) && $key != $i)
             {
-                $i = array_search($val,$temp);
-                if (!empty($i) && $key != $i)
-                {
-                    $temp[$i.','.$key] = $temp[$i];
-                    unset($temp[$i]);
-                }
+                $temp[$i.','.$key] = $temp[$i];
+                unset($temp[$i]);
             }
+        }
 
-            $a = $temp;
-        } //--> end 0ccol.f tricks
+        $a = $temp;
+        //--> end 0ccol.f tricks
 
         $c = count($a);
         $f = '';
-        foreach ($a as $k => $v)
+        reset ($a);
+        while (list($key, $value) = each($a))
         {
-            $f .= $k . '{' . $v . '}';
+            $f .= $key . '{' . $value . '}';
         }
 
         return $this->compress($f);
