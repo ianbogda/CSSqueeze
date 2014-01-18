@@ -757,54 +757,9 @@ class CSSqueeze
             $property = trim(strtolower($propertyValue[0]));
             $value    = trim($propertyValue[1]);
 
-            if (isset($this->colorValues[$property]))
-            {
-                // rgb(0,0,0) -> #000000 (or #000 in this case later)
-                $color = strtolower($value);
-
-                // rgb color
-                if (false !== strpos($color, "rgb("))
-                {
-                    $rgb = str_replace('rgb(','', $color);
-                    $rgb = str_replace(')','', $rgb);
-
-                    if (false !== strpos($rgb, '%'))
-                    {
-                        $rgb = str_replace('%','', $rgb);
-                        $rgb = explode(',', $rgb);
-
-                        $hex  = sprintf('%02x', round(255 * $rgb[0] / 100,0));
-                        $hex .= sprintf('%02x', round(255 * $rgb[1] / 100,0));
-                        $hex .= sprintf('%02x', round(255 * $rgb[2] / 100,0));
-                    }
-                    else
-                    {
-                        $rgb = explode(',', $rgb);
-
-                        $hex  = str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
-                        $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
-                        $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
-                    }
-                    $color = '#' . $hex;
-                }
-
-                // Fix bad color names
-                (isset($this->replaceColors[$color])) && $color = $this->replaceColors[$color];
-
-                // #aabbcc -> #abc
-                $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
-                $replacement = '#$1$2$3';
-                $color       = preg_replace($pattern, $replacement, $color);
-
-                /* return shortest color name or hexa code */
-                $value = (isset($this->shortColor[$color]))
-                    ? $this->shortColor[$color]
-                    : $color;
-
-                unset($pattern, $replacement, $color);
-            }
-
-            $a[$property] = $value;
+            $a[$property] = (isset($this->colorValues[$property]))
+                ? $this->getShortestColor($value)
+                : $value;
         }
 
         // Keep only specified and valid properties (this remove ie hacks)
@@ -821,6 +776,60 @@ class CSSqueeze
         unset($a, $b);
 
         return $block;
+    }
+
+    /**
+    * Get short color value
+    *
+    * @param string $color color to short.
+    *
+    * @return string Returns shortest color.
+    */
+    protected function getShortestColor($color)
+    {
+        // rgb(0,0,0) -> #000000 (or #000 in this case later)
+        $color = strtolower($color);
+
+        // rgb color
+        if (false !== strpos($color, "rgb("))
+        {
+            $rgb = str_replace('rgb(','', $color);
+            $rgb = str_replace(')','', $rgb);
+
+            if (false !== strpos($rgb, '%'))
+            {
+                $rgb = str_replace('%','', $rgb);
+                $rgb = explode(',', $rgb);
+
+                $hex  = sprintf('%02x', round(255 * $rgb[0] / 100,0));
+                $hex .= sprintf('%02x', round(255 * $rgb[1] / 100,0));
+                $hex .= sprintf('%02x', round(255 * $rgb[2] / 100,0));
+            }
+            else
+            {
+                $rgb = explode(',', $rgb);
+
+                $hex  = str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
+                $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
+                $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+            }
+            $color = '#' . $hex;
+        }
+
+        // Fix bad color names
+        (isset($this->replaceColors[$color])) && $color = $this->replaceColors[$color];
+
+         // #aabbcc -> #abc
+         $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
+         $replacement = '#$1$2$3';
+         $color       = preg_replace($pattern, $replacement, $color);
+
+         unset($pattern, $replacement);
+
+         /* return shortest color name or hexa code */
+         return (isset($this->shortColor[$color]))
+             ? $this->shortColor[$color]
+             : $color;
     }
 
     /**
