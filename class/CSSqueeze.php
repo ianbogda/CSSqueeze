@@ -601,13 +601,9 @@ class CSSqueeze
             }
         }
 
-        $selectors = array();
-        $blocks    = array();
-        foreach ($b as $k => $v)
-        {
-            $selectors[] = $k;
-            $blocks[]    = $this->sorter($v);
-        }
+        $selectors = array_keys($b);
+        $blocks    = array_map(function($value)
+           {return $this->sorter($value); }, array_values($b));
 
         return array($selectors, $blocks);
     }
