@@ -750,70 +750,61 @@ class CSSqueeze
         // loop through each style and split apart the key from the value
         foreach($declarations as $declaration)
         {
-            if ('' !== $declaration)
+            $propertyValue = explode(':', $declaration);
+
+            if (!isset($propertyValue[1])) continue;
+
+            $property = trim(strtolower($propertyValue[0]));
+            $value    = trim($propertyValue[1]);
+
+            if (isset($this->colorValues[$property]))
             {
-                $propertyValue = explode(':', $declaration);
+                // rgb(0,0,0) -> #000000 (or #000 in this case later)
+                $color = strtolower($value);
 
-                // build the master css tree
-                switch(isset($propertyValue[1]))
+                // rgb color
+                if (false !== strpos($color, "rgb("))
                 {
-                case true:
-                    $property = trim(strtolower($propertyValue[0]));
-                    $value    = trim($propertyValue[1]);
+                    $rgb = str_replace('rgb(','', $color);
+                    $rgb = str_replace(')','', $rgb);
 
-                    if (isset($this->colorValues[$property]))
+                    if (false !== strpos($rgb, '%'))
                     {
-                        // rgb(0,0,0) -> #000000 (or #000 in this case later)
-                        $color = strtolower($value);
+                        $rgb = str_replace('%','', $rgb);
+                        $rgb = explode(',', $rgb);
 
-                        // rgb color
-                        switch (true)
-                        {
-                        case (false !== strpos($color, "rgb(")):
-                            $rgb = str_replace('rgb(','', $color);
-                            $rgb = str_replace(')','', $rgb);
-
-                            switch(true)
-                            {
-                            case (false !== strpos($rgb, '%')):
-                                $rgb = str_replace('%','', $rgb);
-                                $rgb = explode(',', $rgb);
-
-                                $hex  = sprintf('%02x', round(255 * $rgb[0] / 100,0));
-                                $hex .= sprintf('%02x', round(255 * $rgb[1] / 100,0));
-                                $hex .= sprintf('%02x', round(255 * $rgb[2] / 100,0));
-                                break;
-                            default:
-                                $rgb = explode(',', $rgb);
-
-                                $hex  = str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
-                                $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
-                                $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
-                                break;
-                            }
-                            $color = '#' . $hex;
-                            break;
-                        }
-
-                        // Fix bad color names
-                        (isset($this->replaceColors[$color])) && $color = $this->replaceColors[$color];
-
-                        // #aabbcc -> #abc
-                        $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
-                        $replacement = '#$1$2$3';
-                        $color       = preg_replace($pattern, $replacement, $color);
-
-                        /* return shortest color name or hexa code */
-                        $value = (isset($this->shortColor[$color]))
-                            ? $this->shortColor[$color]
-                            : $color;
-
-                        unset($pattern, $replacement, $color);
+                        $hex  = sprintf('%02x', round(255 * $rgb[0] / 100,0));
+                        $hex .= sprintf('%02x', round(255 * $rgb[1] / 100,0));
+                        $hex .= sprintf('%02x', round(255 * $rgb[2] / 100,0));
                     }
+                    else
+                    {
+                        $rgb = explode(',', $rgb);
 
-                    $a[$property] = $value;
+                        $hex  = str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
+                        $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
+                        $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+                    }
+                    $color = '#' . $hex;
                 }
+
+                // Fix bad color names
+                (isset($this->replaceColors[$color])) && $color = $this->replaceColors[$color];
+
+                // #aabbcc -> #abc
+                $pattern     = '/#([a-f\\d])\\1([a-f\\d])\\2([a-f\\d])\\3/';
+                $replacement = '#$1$2$3';
+                $color       = preg_replace($pattern, $replacement, $color);
+
+                /* return shortest color name or hexa code */
+                $value = (isset($this->shortColor[$color]))
+                    ? $this->shortColor[$color]
+                    : $color;
+
+                unset($pattern, $replacement, $color);
             }
+
+            $a[$property] = $value;
         }
 
         // Keep only specified and valid properties (this remove ie hacks)
