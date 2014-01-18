@@ -738,7 +738,7 @@ class CSSqueeze
     *
     * @return array[] Returns block sorted.
     */
-    protected function sorter($block)
+    public function sorter($block)
     {
         $a = array(); // master array to hold all values
 
