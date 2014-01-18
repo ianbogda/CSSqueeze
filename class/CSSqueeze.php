@@ -221,7 +221,7 @@ class CSSqueeze
         'break-before', 'break-inside', 'break-after', 'page-break-before', 'page-break-inside',     'page-break-after',
         'orphans',      'windows',      '-ms-zoom',    'zoom', 'max-zoom',  'min-zoom', 'user-zoom', 'orientation',
 /* Speech */
-        'volume',  'speak',      'pause',       'pause-before', 'pause-after', 'speak-punctuation', 'speak-numeral'
+        'volume',  'speak',      'pause',       'pause-before', 'pause-after', 'speak-punctuation', 'speak-numeral',
         'cue',     'cue-before', 'cue-after',   'play-during',  'stress',      'richness',
         'azimuth', 'elevation',  'speech-rate', 'voice-family', 'pitch',       'pitch-range', 
         
