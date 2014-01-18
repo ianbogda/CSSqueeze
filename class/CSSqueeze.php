@@ -604,7 +604,7 @@ class CSSqueeze
         $selectors = array_keys($b);
         $self = $this;
         $blocks    = array_map(function($value) use($self)
-           {return $this->sorter($value); }, array_values($b));
+           {return $self->sorter($value); }, array_values($b));
 
         return array($selectors, $blocks);
     }
