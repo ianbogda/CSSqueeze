@@ -117,7 +117,7 @@ class CSSqueeze
     );
 
     /** @var array[] $shortColor array of css font weight */
-    protected $fontWeight = array('normal', 'bold', 'bolder', 'lighter', '100', '200', '300', 
+    protected $fontWeight = array('normal', 'bold', 'bolder', 'lighter', '100', '200', '300',
                                   '400',    '500',   '600', '  700',     '800', '900', 'inherit'
     );
 
@@ -642,17 +642,12 @@ class CSSqueeze
                 unset($temp[$i]);
             }
         }
-
-        $a = $temp;
         //--> end 0ccol.f tricks
 
-        $c = count($a);
-        $f = '';
-        reset ($a);
-        while (list($key, $value) = each($a))
-        {
-            $f .= $key . '{' . $value . '}';
-        }
+        $f = implode( array_map( function ($key, $value)
+        { return sprintf("%s{%s}", $value, $key); }, $temp, array_keys($temp)));
+
+        unset($temp);
 
         return $this->compress($f);
     }
@@ -829,11 +824,9 @@ class CSSqueeze
             $b[$key] = $a[$key];
         }
 
-        $block = '';
-        foreach ($b as $key => $value)
-        {
-            $block .= $key . ':' . $value . ';';
-        }
+        $block = implode( array_map( function ($key, $value)
+            { return sprintf("%s:%s;", $value, $key); }, $b, array_keys($b)));
+
         unset($a, $b);
 
         return $block;
