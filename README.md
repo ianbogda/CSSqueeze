@@ -1,9 +1,12 @@
 CSSqueeze: Efficient CSS minification in PHP
 ==================================================
 
-*  [![Build Status](https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master)](https://travis-ci.org/ianbogda/CSSqueeze)
-*  [![Code Coverage](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/coverage.png?s=dac1996f32de040657203c458bd96aea79b390c7)](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/)
-*  [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/quality-score.png?s=484130f5adab9ca8ce1dfab522a52406c0b336e2)](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/)
+[![License](https://poser.pugx.org/patchwork/cssqueeze/license.png)](https://packagist.org/packages/patchwork/cssqueeze)
+
+[![Build Status](https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master)](https://travis-ci.org/ianbogda/CSSqueeze) [![Code Coverage](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/coverage.png?s=dac1996f32de040657203c458bd96aea79b390c7)](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/quality-score.png?s=484130f5adab9ca8ce1dfab522a52406c0b336e2)](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/)
+
+[![Latest Stable Version](https://poser.pugx.org/patchwork/cssqueeze/v/stable.png)](https://packagist.org/packages/patchwork/cssqueeze) [![Latest Unstable Version](https://poser.pugx.org/patchwork/cssqueeze/v/unstable.png)](https://packagist.org/packages/patchwork/cssqueeze)
+
 
 CSSqueeze …
 
