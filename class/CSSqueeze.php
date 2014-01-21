@@ -183,14 +183,14 @@ class CSSqueeze
         'src', 'line-height', 'opacity', '-ms-filter:\'progid:DXImageTransform.Microsoft.Alpha',
         'filter:progid:DXImageTransform.Microsoft.Alpha(Opacity', '-ms-interpolation-mode', '-webkit-filter', '-ms-filter',
         'filter', 'resize', 'cursor', 'nav-index', 'nav-up', 'nav-right', 'nav-down', 'nav-left',
-        '-webkit-transition', '-webkit-transition-delay', '-webkit-transition-timing-function', 
+        '-webkit-transition', '-webkit-transition-delay', '-webkit-transition-timing-function',
            '-moz-transition',    '-moz-transition-delay',    '-moz-transition-timing-function',
             '-ms-transition',     '-ms-transition-delay',     '-ms-transition-timing-function',
              '-o-transition',      '-o-transition-delay',      '-o-transition-timing-function',
                 'transition',         'transition-delay',         'transition-timing-function',
         '-webkit-transition-duration',   '-webkit-transition-property',
            '-moz-transition-duration',      '-moz-transition-property',
-            '-ms-transition-duration',       '-ms-transition-property',  
+            '-ms-transition-duration',       '-ms-transition-property',
              '-o-transition-duration',        '-o-transition-property',
                 'transition-duration',           'transition-property',
         '-webkit-transform','-webkit-transform-origin', '-webkit-animation', '-webkit-animation-name',
@@ -373,33 +373,35 @@ class CSSqueeze
     protected function prepareComments($css)
     {
         // from http://minify.googlecode.com/svn/trunk/min/lib/Minify/CSS/Compressor.php
-        $pattern = $replacement = array();
 
-        if ($this->keepHack)
-        {
+        $pregReplace = array(
+
+            /* remove comments but keep importants one */
+            '#\/\*[^\!].*\*\/#isU' => '',
+        );
+
+        $pregReplaceHack = array(
             // preserve empty comment after '>'
             // http://www.webdevout.net/css-hacks#in_css-selectors
-            $pattern[]     = '@>/\\*\\s*\\*/@';
-            $replacement[] = '>/*keep*/';
+            '@>/\\*\\s*\\*/@' => '>/*keep*/',
 
             // preserve empty comment between property and value
             // http://css-discuss.incutio.com/?page=BoxModelHack
-            $pattern[]     = '@/\\*\\s*\\*/\\s*:@';
-            $replacement[] = '/*keep*/:';
+            '@/\\*\\s*\\*/\\s*:@' => '/*keep*/:',
 
-            $pattern[]     = '@:\\s*/\\*\\s*\\*/@';
-            $replacement[] = ':/*keep*/';
+            '@:\\s*/\\*\\s*\\*/@' => ':/*keep*/',
 
             // prevent triggering IE6 bug: http://www.crankygeek.com/ie6pebug/
-            $pattern[]     = '/:first-l(etter|ine)\\{/';
-            $replacement[] = ':first-l$1 {';
-        }
+            '/:first-l(etter|ine)\\{/' => ':first-l$1 {',
+        );
 
-        /* remove comments but keep importants one */
-        $pattern[]     = '#\/\*[^\!].*\*\/#isU';
-        $replacement[] = '';
+        ($this->keepHack) && $pregReplace +=$pregReplaceHack;
 
-        return preg_replace($pattern, $replacement, $css);
+        return preg_replace(
+            array_keys($pregReplace),
+            array_values($pregReplace),
+            $css
+        );
     }
 
     /**
@@ -553,77 +555,64 @@ class CSSqueeze
     protected function compress($css)
     {
         $css = $this->shortand($css);
-        $pattern = $replacement = array();
 
         $units = implode('|', $this->units);
 
-        // minimize hex colors
-        $pattern[]     = '/([^=])#([a-f\\d])\\2([a-f\\d])\\3([a-f\\d])\\4([\\s;\\}])/i';
-        $replacement[] = '$1#$2$3$4$5';
+        $pregReplace = array(
 
-        /* 0.1em => .1em */
-        $pattern[]     = "#(-?)0\.(\d+({$units}))#";
-        $replacement[] = '$1.$2';
+            // minimize hex colors
+            '/([^=])#([a-f\\d])\\2([a-f\\d])\\3([a-f\\d])\\4([\\s;\\}])/i' => '$1#$2$3$4$5',
 
-        /* 0px => 0 */
-        $pattern[]     = "#([\s]|:)0({$units})#";
-        $replacement[] = '${1}0';
+            /* 0.1em => .1em */
+            "#(-?)0\.(\d+({$units}))#" => '$1.$2',
 
-        /* 0 0 0 0 | 0 0 0 | 0 0 => 0 */
-        $pattern[]     = "#:0 0 0 0;#";
-        $replacement[] = ':0;';
-        $pattern[]     = "#:0 0 0;#";
-        $replacement[] = ':0;';
-        $pattern[]     = "#:0 0;#";
-        $replacement[] = ':0;';
+            /* 0px => 0 */
+            "#([\s]|:)0({$units})#"    => '${1}0',
 
-        /* Removing unnecessary decimal*/
-        $pattern[]     = "#:(([^;]*-?[0-9]*)\.|([^;]*-?[0-9]*\.[1-9]+))0+({$units})([^;]*);#";
-        $replacement[] = ':$2$3$4$5;';
+            /* 0 0 0 0 | 0 0 0 | 0 0 => 0 */
+            "#:0 0 0 0;#" => ':0;',
+            "#:0 0 0;#"   => ':0;',
+            "#:0 0;#"     => ':0;',
 
-        /* remove empty selectors */
-        $pattern[]     = '#([^}]+){}#isU';
-        $replacement[] = '';
+            /* Removing unnecessary decimal*/
+            "#:(([^;]*-?[0-9]*)\.|([^;]*-?[0-9]*\.[1-9]+))0+({$units})([^;]*);#" => ':$2$3$4$5;',
 
-        /* remove tabs, spaces, newlines, etc. */
-        $pattern[]     = '`\A[ \t]*\r?\n|\r?\n[ \t]*\Z`';
-        $replacement[] = '';
-        $pattern[]     = '/^\/\*(\r\n|\r|\n|\t|\s\s+)/';
-        $replacement[] = '';
-        $pattern[]     = '/(\*\/)\r?\n?/';
-        $replacement[] = '$1';
+            /* remove empty selectors */
+            '#([^}]+){}#isU' => '',
 
-        // Fix url()
-        $pattern[]     = '#(url|rgba|rgb|hsl|hsla|attr)\((.*)\)(\S)#isU';
-        $replacement[] = '$1($2) $3';
+            /* remove tabs, spaces, newlines, etc. */
+            '`\A[ \t]*\r?\n|\r?\n[ \t]*\Z`' => '',
+            '/^\/\*(\r\n|\r|\n|\t|\s\s+)/'  => '',
+            '/(\*\/)\r?\n?/'                => '$1',
 
-        /* remove whitespace around operators */
-        $pattern[]     = '/(?<=[\[\(>+=]|=[=~^$*|>+\]\)])/';
-        $replacement[] = '';
+            // Fix url()
+            '#(url|rgba|rgb|hsl|hsla|attr)\((.*)\)(\S)#isU' => '$1($2) $3',
 
-        /* remove whitespace on both sides of colons znd operators : >=[]~ */
-        $pattern[]     = '/\s?(\:|\>|=|\[|\]|~)\s?/';
-        $replacement[] = '$1';
+            /* remove whitespace around operators */
+            '/(?<=[\[\(>+=]|=[=~^$*|>+\]\)])/' => '',
 
-        /* remove whitespace on both sides of curly brackets {} */
-        $pattern[]     = '/\s?\{\s?/';
-        $replacement[] = '{';
-        $pattern[]     = '/\W\s?\}\W\s?/';
-        $replacement[] = '}';
+            /* remove whitespace on both sides of colons and operators : >=[]~ */
+            '/\s?(\:|\>|=|\[|\]|~)\s?/' => '$1',
 
-        /* remove whitespace on both sides of commas , */
-        $pattern[]     = '/\s?\,\s?/';
-        $replacement[] = ',';
+            /* remove whitespace on both sides of curly brackets {} */
+            '/\s?\{\s?/' => '{',
+            '/\W\s?\}\W\s?/' => '}',
 
-        /* remove multi semi-colons */
-        $pattern[]     = '/;+/';
-        $replacement[] = ';';
+            /* remove whitespace on both sides of commas , */
+            '/\s?\,\s?/' => ',',
 
-        /* remove semi-colons before closing curly bracket } */
-        $pattern[]     = '/;\}/';
-        $replacement[] = '}';
+            /* remove multi semi-colons */
+            '/;+/' => ';',
 
-        return preg_replace($pattern, $replacement, $css);
+            /* remove semi-colons before closing curly bracket } */
+            '/;\}/' => '}',
+        );
+
+        return preg_replace(
+            array_keys($pregReplace),
+            array_values($pregReplace),
+            $css
+        );
     }
 
     /**
@@ -637,31 +626,22 @@ class CSSqueeze
     protected function deflat($css)
     {
         $css = $this->shortand($css);
-        $pattern = $replacement = array();
 
-        /* add semicolon before curly bracket } and newline after */
-        $pattern[]     = '/([}])/';
-        $replacement[] = ";$1\n\n";
+        $pregReplace = array(
+            '/([}])/'               => ";$1\n\n",  /* add semicolon before curly bracket } and newline after */
+            '/([{])/'               => " $1\n",    /* add whitespace before curly bracket { */
+            '/([;])/'               => "$1\n",     /* add newlines after semicolons ; */
+            '/\n$/m'                => '',         /* remove last linebreak */
+            '#(\/\*[\!].*\*\/)#isU' => "$1\n",   /* add new line after important comments */
 
-        /* add whitespace before curly bracket { */
-        $pattern[]     = '/([{])/';
-        $replacement[] = " $1\n";
+            '/((.*):(.*))/'         => $this->deflatIndent . '$2 : $3',
+        );
 
-        /* add newlines after semicolons ; */
-        $pattern[]     = '/([;])/';
-        $replacement[] = "$1\n";
-
-        $pattern[]     = '/((.*):(.*))/';
-        $replacement[] = $this->deflatIndent . '$2 : $3';
-
-        $pattern[]     = '/\n$/m';
-        $replacement[] = '';
-
-        /* add new line after important comments */
-        $pattern[]     = '#(\/\*[\!].*\*\/)#isU';
-        $replacement[] = "$1\n";
-
-        return preg_replace($pattern, $replacement, $css);
+        return preg_replace(
+            array_keys($pregReplace),
+            array_values($pregReplace),
+            $css
+        );
     }
 
     /**
