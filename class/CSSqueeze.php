@@ -223,8 +223,7 @@ class CSSqueeze
 /* Speech */
         'volume',  'speak',      'pause',       'pause-before', 'pause-after', 'speak-punctuation', 'speak-numeral',
         'cue',     'cue-before', 'cue-after',   'play-during',  'stress',      'richness',
-        'azimuth', 'elevation',  'speech-rate', 'voice-family', 'pitch',       'pitch-range', 
-        
+        'azimuth', 'elevation',  'speech-rate', 'voice-family', 'pitch',       'pitch-range',
     );
 
     /** @var array[] $shortColor array of short colors */
@@ -247,12 +246,15 @@ class CSSqueeze
         '#808080'=> 'gray',
         '#c00'   => 'red',
     );
+    Protected $deflatIndent = '    ';
 
-    public function __construct()
+    public function __construct($deflatIndent = null)
     {
         $this->properties  = array_flip($this->properties );
         $this->prop_values = array_flip($this->prop_values);
         $this->colorValues = array_flip($this->colorValues);
+
+        isset($deflatIndent) && $this->deflatIndent = $deflatIndent;
     }
 
     /**
@@ -282,8 +284,7 @@ class CSSqueeze
         $_css = $this->uniqueArray($selectors, $blocks);
         $f = strlen($_css_) > strlen($_css) ? $_css : $_css_;
 
-        $cssDeflat = $this->deflat($f);
-        return $singleLine ? $f : $cssDeflat;
+        return $singleLine ? $f : $this->deflat($f);
     }
 
     /**
@@ -633,7 +634,7 @@ class CSSqueeze
     *
     * @return string Returns css defalted.
     */
-    protected function deflat($css, $indent = '')
+    protected function deflat($css)
     {
         $css = $this->shortand($css);
         $pattern = $replacement = array();
@@ -650,11 +651,15 @@ class CSSqueeze
         $pattern[]     = '/([;])/';
         $replacement[] = "$1\n";
 
-        if ($indent)
-        {
-            $pattern[]     = '/((.*):(.*))/';
-            $replacement[] = $indent . '$1';
-        }
+        $pattern[]     = '/((.*):(.*))/';
+        $replacement[] = $this->deflatIndent . '$2 : $3';
+
+        $pattern[]     = '/\n$/m';
+        $replacement[] = '';
+
+        /* add new line after important comments */
+        $pattern[]     = '#(\/\*[\!].*\*\/)#isU';
+        $replacement[] = "$1\n";
 
         return preg_replace($pattern, $replacement, $css);
     }
