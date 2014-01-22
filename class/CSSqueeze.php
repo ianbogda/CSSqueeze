@@ -290,8 +290,23 @@ class CSSqueeze
         $this->keepHack = $keepHack;
 
         // Get content from @import
-        //$css = $this->import($css);
-        // get contents from imports
+        $css = $this->getImport($css);
+
+        // get CSS treated
+        $css = $this->getCSS($css);
+
+        return $singleLine ? $css : $this->deflat($css);
+    }
+
+    /**
+     * get content from @import
+     *
+     * @param string $css CSS to consume
+     *
+     * @return string @import replaced by th CSS
+     */
+    protected function getImport($css)
+    {
         while (preg_match("/@import\s+url\('([^']+)'\);\s+/", $css, $matches))
         {
             $url = $matches[1];
@@ -302,10 +317,7 @@ class CSSqueeze
             }
         }
 
-        // get CSS treated
-        $css = $this->getCSS($css);
-
-        return $singleLine ? $css : $this->deflat($css);
+        return $css;
     }
 
     /**
