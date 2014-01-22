@@ -265,7 +265,7 @@ class CSSqueeze
         $this->propValues = array_flip($this->propValues);
         $this->colorValues = array_flip($this->colorValues);
 
-        isset($deflatIndent) && $this->deflatIndent = $deflatIndent;
+        $this->deflatIndent = $deflatIndent;
         $this->configuration = $configuration;
     }
 
@@ -289,6 +289,8 @@ class CSSqueeze
 
         $this->keepHack = $keepHack;
 
+        // Get content from @import
+        //$css = $this->import($css);
         // get contents from imports
         while (preg_match("/@import\s+url\('([^']+)'\);\s+/", $css, $matches))
         {
@@ -300,6 +302,21 @@ class CSSqueeze
             }
         }
 
+        // get CSS treated
+        $css = $this->getCSS($css);
+
+        return $singleLine ? $css : $this->deflat($css);
+    }
+
+    /**
+     * Split @media from CSS
+     *
+     * @param string $css CSS to consume
+     *
+     * @return array $ccs and $media
+     */
+    protected function getCSS($css)
+    {
         // extract @media queries (tricks from https://gist.github.com/StanAngeloff/3164569)
         preg_match_all('#(?<media>(?:@media[^{]+)?){(?:(?:[^{}]+)|(?R))*}#s', $css, $captures);
 
@@ -318,7 +335,7 @@ class CSSqueeze
         {
             $css = preg_replace('#\s*' . preg_quote($query, '#') . '#u', '', $css);
         }
-        $css = $this->allInOne($css);
+         $css = $this->allInOne($css);
 
         // Utility function to create an array from a media query
         $groups = array();
@@ -342,7 +359,7 @@ class CSSqueeze
             $css = $css . (trim($groups[$key][0]) . '{' . $this->allInOne($groups[$key][2]) . '}');
         }
 
-        return $singleLine ? $css : $this->deflat($css);
+        return $css;
     }
 
     /**
