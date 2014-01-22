@@ -19,14 +19,14 @@ class CSSqueeze
     /** @var boolean $keepHack keep /or not css hacks */
     protected $keepHack = true;
 
-    /** @var array[] $units array css units */
+    /** @var array $units array css units */
     protected $units = array('in', 'cm',  'mm', 'pt','pc','px', 'rem',
                              'em', '%',   'ex', 'gd','vw','vh', 'vm',
                              'deg','grad','rad','ms','s', 'khz','hz'
     );
 
-    /** @var array[] $prop_values array of css properties values */
-    protected $prop_values = array(
+    /** @var array $propValues array of css properties values */
+    protected $propValues = array(
         'background',       'background-position', 'background-size',
         'border',           'border-top',          'border-right',      'border-bottom',       'border-left', 'border-width',
         'border-top-width', 'border-right-width',  'border-left-width', 'border-bottom-width', 'bottom',      'border-spacing',
@@ -37,21 +37,21 @@ class CSSqueeze
         'text-indent',      'letter-spacing',      'word-spacing',      'width',
     );
 
-    /** @var array[] $fontSize array of css fontsize */
+    /** @var array $fontSize array of css fontsize */
     protected $fontSize  = array('xx-small', 'x-small',  'small',   'medium', 'large',
                                  'x-large',  'xx-large', 'smaller', 'larger', 'inherit'
     );
 
-    /** @var array[] $fontStyle array of css font style */
+    /** @var array $fontStyle array of css font style */
     protected $fontStyle = array('normal', 'italic', 'oblique', 'inherit');
 
-    /** @var array[] $colorValues array of css color values */
+    /** @var array $colorValues array of css color values */
     protected $colorValues = array(
         'background-color', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color',
         'border-left-color', 'color',       'outline-color',    'column-rule-color',
     );
 
-    /** @var array[] $listeStyleType array of css liste style type */
+    /** @var array $listeStyleType array of css liste style type */
     protected $listeStyleType = array(
         'armenian',       'circle',      'cjk-ideographic', 'decimal',        'decimal-leading-zero', 'disc',
         'georgian',       'hebrew',      'hiragana',        'hiragana-iroha', 'inherit',              'katakana',
@@ -59,7 +59,7 @@ class CSSqueeze
         'square',         'upper-alpha', 'upper-latin',     'upper-roman',
     );
 
-    /** @var array[] $replaceColors array of css replace naming to hexa colors */
+    /** @var array $replaceColors array of css replace naming to hexa colors */
     protected $replaceColors =  array(
         'aliceblue'         => '#F0F8FF', 'antiquewhite'         => '#FAEBD7', 'aquamarine'      => '#7FFFD4',
         'azure'             => '#F0FFFF', 'beige'                => '#F5F5DC', 'bisque'          => '#FFE4C4',
@@ -105,7 +105,7 @@ class CSSqueeze
         'wheat'             => '#F5DEB3', 'whitesmoke'           => '#F5F5F5', 'yellowgreen'     => '#9ACD32'
     );
 
-    /** @var array[] $shortColor array of css shorthands */
+    /** @var array $shortColor array of css shorthands */
     protected $shorthands = array(
         'border-color'  => array('border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',),
         'border-style'  => array('border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',),
@@ -116,12 +116,12 @@ class CSSqueeze
         'border-radius' => 0
     );
 
-    /** @var array[] $shortColor array of css font weight */
+    /** @var array $shortColor array of css font weight */
     protected $fontWeight = array('normal', 'bold', 'bolder', 'lighter', '100', '200', '300',
                                   '400',    '500',   '600', '  700',     '800', '900', 'inherit'
     );
 
-    /** @var array[] $shortColor array of css properties */
+    /** @var array $shortColor array of css properties */
     protected $properties = array(
         'position', 'top', 'right', 'bottom', 'left', 'z-index', 'display', 'visibility',
         '-webkit-flex-direction', '-webkit-flex-order', '-webkit-flex-pack', '-webkit-flex-align',
@@ -226,7 +226,7 @@ class CSSqueeze
         'azimuth', 'elevation',  'speech-rate', 'voice-family', 'pitch',       'pitch-range',
     );
 
-    /** @var array[] $shortColor array of short colors */
+    /** @var array $shortColor array of short colors */
     protected $shortColor = array(
         /* color name -> hex code */
         'black'  => '#000',
@@ -246,21 +246,33 @@ class CSSqueeze
         '#808080'=> 'gray',
         '#c00'   => 'red',
     );
-    Protected $deflatIndent = '    ';
+    /** @var string default defalt indentation */
+    protected $deflatIndent = '    ';
+    /** @var array */
+    protected $configuration = array();
 
-    public function __construct($deflatIndent = null)
+    /**
+     * Constructor
+     *
+     * @param string $deflatIndent
+     * @param array $configuration [optional]
+     *
+     * @return void
+     */
+    public function __construct($deflatIndent = null, array $configuration = null)
     {
         $this->properties  = array_flip($this->properties );
-        $this->prop_values = array_flip($this->prop_values);
+        $this->propValues = array_flip($this->propValues);
         $this->colorValues = array_flip($this->colorValues);
 
         isset($deflatIndent) && $this->deflatIndent = $deflatIndent;
+        $this->configuration = $configuration;
     }
 
     /**
     * Squeezes a Cascade Style Sheet source code.
     *
-    * @param string  $css        css to consume.
+    * @param void    $css        css file or content to consume.
     * @param bool    $singleLine compress /or not css.
     * @param bool    $keepHack   keep /or not css hacks.
     *
@@ -268,10 +280,80 @@ class CSSqueeze
     */
     public function squeeze($css, $singleLine = true, $keepHack = true)
     {
+        // if $css is file, get contents
+        $css = !is_file($this->configuration['BasePath'] . $css)
+            ? $css
+            : file_get_contents($this->configuration['BasePath'] . $css);
         $css = trim($css);
         if ('' === $css) return '';
 
         $this->keepHack = $keepHack;
+
+        // get contents from imports
+        while (preg_match("/@import\s+url\('([^']+)'\);\s+/", $css, $matches))
+        {
+            $url = $matches[1];
+            if (is_file($this->configuration['BasePath'] . '/' . $url) && is_readable($this->configuration['BasePath'] . '/' . $url))
+            {
+                $import = file_get_contents($this->configuration['BasePath'] . $url); // or some other way of reading that url
+                $css = str_replace($matches[0], $import, $css);
+            }
+        }
+
+        // extract @media queries (tricks from https://gist.github.com/StanAngeloff/3164569)
+        preg_match_all('#(?<media>(?:@media[^{]+)?){(?:(?:[^{}]+)|(?R))*}#s', $css, $captures);
+
+        // loop through all matches key
+        foreach (array_keys($captures[0]) as $key)
+        {
+            // if the value does not contain a @media query, drop it
+            if (false === strpos($captures[0][$key], '@media') || empty($captures['media'][$key]))
+            {
+                unset ($captures[0][$key]);
+            }
+        }
+
+        // Erase all @media queries from input CSS
+        foreach ($captures[0] as $query)
+        {
+            $css = preg_replace('#\s*' . preg_quote($query, '#') . '#u', '', $css);
+        }
+        $css = $this->allInOne($css);
+
+        // Utility function to create an array from a media query
+        $groups = array();
+        foreach (array_keys($captures[0]) as $key)
+        {
+            $media = $captures['media'][$key];
+
+            // The code for this code starts off with the @media query in it ...
+            $code = $captures[0][$key];
+            $code = preg_replace('#' . preg_quote($media, '#') . '#u', '' , $code);
+            $code = preg_replace('#^{|}$#u', '', $code);
+
+            $groupKey = trim( preg_replace('#[^\w\d]+#u', '-', trim($key)));
+            array_key_exists($groupKey, $groups) || $groups[$groupKey] = array($media, '{');
+            $groups[$groupKey][] = $code;
+        }
+
+        //sort and merge selectors,rules for each @media
+        foreach (array_keys($groups) as $key)
+        {
+            $css = $css . (trim($groups[$key][0]) . '{' . $this->allInOne($groups[$key][2]) . '}');
+        }
+
+        return $singleLine ? $css : $this->deflat($css);
+    }
+
+    /**
+     * AllInOne to do things
+     *
+     * @param string $css CSS to consume
+     *
+     * @return string $css the shortest CSS
+     */
+    protected function allInOne($css)
+    {
         $css = $this->prepareComments($css);
 
         list($selectors, $blocks) = $this->tokenize($css);
@@ -282,18 +364,17 @@ class CSSqueeze
 
         // Which one ?
         $_css = $this->uniqueArray($selectors, $blocks);
-        $f = strlen($_css_) > strlen($_css) ? $_css : $_css_;
 
-        return $singleLine ? $f : $this->deflat($f);
+        return strlen($_css_) > strlen($_css) ? $_css : $_css_;
     }
 
     /**
     * Merge selectors.
     *
-    * @param array[] $selectors Array of css selectors.
-    * @param array[] $blocks    Array of css blocks.  .
+    * @param array $selectors Array of css selectors.
+    * @param array $blocks    Array of css blocks.  .
     *
-    * @return array[] Returns array of $slectors and $blocks.
+    * @return array Returns array of $slectors and $blocks.
     */
     protected function mergeSelectors($selectors, $blocks)
     {
@@ -326,10 +407,10 @@ class CSSqueeze
     /**
     * unique array (remove duplicates).
     *
-    * @param array[] $selectors Array of css selectors.
-    * @param array[] $blocks    Array of css blocks.  .
+    * @param array $selectors Array of css selectors.
+    * @param array $blocks    Array of css blocks.  .
     *
-    * @return array[] Returns array of $slectors and $blocks.
+    * @return array Returns array of $slectors and $blocks.
     */
     protected function uniqueArray($selectors, $blocks)
     {
@@ -408,8 +489,6 @@ class CSSqueeze
     * Tokenize Cascade Style Sheet source code.
     *
     * @param string  $lines      css to consume.
-    * @param bool    $singleLine compress /or not css.
-    * @param bool    $keepHack   keep /or not css hacks.
     *
     * @return string Returns the final css.
     */
@@ -450,9 +529,9 @@ class CSSqueeze
     /**
     * Sorter blocks
     *
-    * @param array[] $block      css to consume.
+    * @param array $block      css to consume.
     *
-    * @return array[] Returns block sorted.
+    * @return array Returns block sorted.
     */
     public function sorter($block)
     {

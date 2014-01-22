@@ -116,4 +116,46 @@ class CSSqueezeTest extends \PHPUnit_Framework_TestCase
                 : $this->assertSame($expe, $test, "TestingXfail {$file}");
         }
     }
+
+    public function testCSSqueezesImport()
+    {
+        $xfail= 0;
+        $files = array(
+            'import.css',
+        );
+
+        foreach($files as $file)
+        {
+            $configuration = array('BasePath' => __DIR__ . '/test/');
+            $expe = file_get_contents(__DIR__ . '/expected/' . $file);
+
+            $cz = new CSSqueeze('', $configuration);
+			$test = $cz->squeeze($file) . "\n";
+
+            $xfail
+                ? $this->assertFalse($expe === $test, "Xfail {$file}")
+                : $this->assertSame($expe, $test, "TestingXfail {$file}");
+        }
+    }
+
+    public function testCSSqueezesMedia()
+    {
+        $xfail= 0;
+        $files = array(
+            'media.css',
+        );
+
+        foreach($files as $file)
+        {
+            $test = file_get_contents(__DIR__ . '/test/' . $file);
+            $expe = file_get_contents(__DIR__ . '/expected/' . $file);
+
+			$cz = new CSSqueeze;
+			$test = $cz->squeeze($test) . "\n";
+
+            $xfail
+                ? $this->assertFalse($expe === $test, "Xfail {$file}")
+                : $this->assertSame($expe, $test, "TestingXfail {$file}");
+        }
+    }
 }

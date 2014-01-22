@@ -33,12 +33,14 @@ Features
   * border
   * outline
   * list-style
-  * background (eg instead of background-color) 
+  * background (eg instead of background-color)
 * Compress colors
   * Use short notations of hexadecimal colors (Ex: color: # ff6600 becomes color: # f60;). Use colors supported in CSS 2 whose name is shorter than the hexadecimal.
 * Sorting CSS properties
 * Merge properties
 * merge rules if required
+* @import CSS
+* @media queries CSS
 
 Compare few minifiers
 ---------------------
@@ -46,7 +48,7 @@ Compare few minifiers
 ranking is by _after compression and gzipped_, _after compression_
 
 file compressed : [002/002.css from csszengarden.com](http://csszengarden.com/002/002.css)
-<table> 
+<table>
 <thead>
   <tr>
     <td>&nbsp;</td> <td>origin</td> <td>after compression</td> <td>saved</td> <td>compression ratio</td> <td>after compression and gzipped</td> <td>compression and gzip ratio
@@ -76,7 +78,7 @@ file compressed : [002/002.css from csszengarden.com](http://csszengarden.com/00
     <td>minifycss.com</td> <td>5547</td> <td>2894</td> <td>2653</td> <td>47,83%</td> <td>936</td> <td>83,13%</td>
   </tr>
 </tbody>
-</table> 
+</table>
 
 
 Todo

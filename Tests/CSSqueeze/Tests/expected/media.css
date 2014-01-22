@@ -1,0 +1,1 @@
+@media screen{p.test{font-size:14px;font-family:verdana,sans-serif}}@media print{p.test{font-size:10px;font-family:times,serif}}@media screen,print{p.test{font-weight:bold}}
