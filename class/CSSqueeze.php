@@ -299,7 +299,7 @@ class CSSqueeze
     }
 
     /**
-     * get content from @import
+     * get content from \@import
      *
      * @param string $css CSS to consume
      *
@@ -321,7 +321,7 @@ class CSSqueeze
     }
 
     /**
-     * Split @media from CSS
+     * Split \@media from CSS
      *
      * @param string $css CSS to consume
      *
