@@ -1,7 +1,4 @@
 <?php // vi: set fenc=utf-8 ts=4 sw=4 et:
-//TODO: rgba
-//TODO: vendor prefix
-//TODO: more shorthands
 /*
  * Copyright (C) 2012 Yann Bogdanovic - ianbogda@gmail.com
  *
@@ -303,7 +300,7 @@ class CSSqueeze
      *
      * @param string $css CSS to consume
      *
-     * @return string @import replaced by th CSS
+     * @return string \@import replaced by th CSS
      */
     protected function getImport($css)
     {
