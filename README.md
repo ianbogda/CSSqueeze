@@ -7,6 +7,8 @@ CSSqueeze: Efficient CSS minification in PHP
 
 [![Latest Stable Version](https://poser.pugx.org/patchwork/cssqueeze/v/stable.png)](https://packagist.org/packages/patchwork/cssqueeze) [![Latest Unstable Version](https://poser.pugx.org/patchwork/cssqueeze/v/unstable.png)](https://packagist.org/packages/patchwork/cssqueeze)
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c/mini.png)](https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c)
+
 
 CSSqueeze …
 
