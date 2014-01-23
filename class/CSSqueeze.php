@@ -9,8 +9,6 @@
  */
 namespace Patchwork;
 
-use Patchwork;
-
 class CSSqueeze
 {
     /** @var boolean $keepHack keep /or not css hacks */
