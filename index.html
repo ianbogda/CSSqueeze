@@ -19,7 +19,7 @@
 
         <header>
           <h1>Cssqueeze</h1>
-          <h2>CSSqueeze: Efficient CSS minification in a single PHP class licensed under Apache 2 and GPLv2.</h2>
+          <h2>Efficient CSS minification in a single PHP</h2>
         </header>
 
         <section id="downloads" class="clearfix">
@@ -31,20 +31,27 @@
         <hr>
 
         <section id="main_content">
-          <h1>
-<a name="cssqueeze-efficient-css-minification-in-php" class="anchor" href="#cssqueeze-efficient-css-minification-in-php"><span class="octicon octicon-link"></span></a>CSSqueeze: Efficient CSS minification in PHP</h1>
+          <p><a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/license.png" alt="License"></a><a href="https://travis-ci.org/ianbogda/CSSqueeze"><img src="https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master" alt="Build Status"></a> <a href="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/"><img src="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/coverage.png?s=dac1996f32de040657203c458bd96aea79b390c7" alt="Code Coverage"></a> <a href="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/"><img src="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/quality-score.png?s=484130f5adab9ca8ce1dfab522a52406c0b336e2" alt="Scrutinizer Quality Score"></a><a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/v/stable.png" alt="Latest Stable Version"></a> <a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/v/unstable.png" alt="Latest Unstable Version"></a><a href="https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c"><img src="https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c/mini.png" alt="SensioLabsInsight"></a></p>
 
-<p><a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/license.png" alt="License"></a></p>
+<p>CSSqueeze… is a single PHP class.</p>
 
-<p><a href="https://travis-ci.org/ianbogda/CSSqueeze"><img src="https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master" alt="Build Status"></a> <a href="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/"><img src="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/coverage.png?s=dac1996f32de040657203c458bd96aea79b390c7" alt="Code Coverage"></a> <a href="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/"><img src="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/quality-score.png?s=484130f5adab9ca8ce1dfab522a52406c0b336e2" alt="Scrutinizer Quality Score"></a></p>
+<h2>
+<a name="install-from-composerjson" class="anchor" href="#install-from-composerjson"><span class="octicon octicon-link"></span></a>Install from composer.json</h2>
 
-<p><a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/v/stable.png" alt="Latest Stable Version"></a> <a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/v/unstable.png" alt="Latest Unstable Version"></a></p>
+<pre><code>{
+    "require" :{
+        "patchowrk/cssqueeze": "*"
+    }
+}
+</code></pre>
 
-<p><a href="https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c"><img src="https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c/mini.png" alt="SensioLabsInsight"></a></p>
+<h2>
+<a name="basic-usage" class="anchor" href="#basic-usage"><span class="octicon octicon-link"></span></a>Basic usage</h2>
 
-<p>CSSqueeze …</p>
-
-<p>It's a single PHP class licensed under Apache 2 and GPLv2.</p>
+<div class="highlight highlight-php"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="nv">$cz</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Patchwork\CSSqueeze</span><span class="p">();</span>
+<span class="nv">$minifiedCSS</span> <span class="o">=</span> <span class="nv">$cs</span><span class="o">-&gt;</span><span class="na">squeeze</span><span class="p">(</span><span class="nv">$originalCSS</span><span class="p">);</span>
+</pre></div>
 
 <h2>
 <a name="php" class="anchor" href="#php"><span class="octicon octicon-link"></span></a>PHP</h2>
@@ -54,7 +61,7 @@
 <li> PHP 5.4</li>
 <li> PHP 5.5</li>
 </ul><h2>
-<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a> Features</h2>
 
 <ul>
 <li> Remove white space and extra characters
@@ -127,7 +134,7 @@
   </tr>
 </tbody>
 </table><h2>
-<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>Todo</h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a> Todo</h2>
 
 <ul>
 <li>preserving the CSS hack</li>
@@ -136,7 +143,7 @@
 <li>rgba(</li>
 <li>change hack throught html class</li>
 </ul><h2>
-<a name="vendors-prefix" class="anchor" href="#vendors-prefix"><span class="octicon octicon-link"></span></a>Vendors Prefix</h2>
+<a name="vendors-prefix" class="anchor" href="#vendors-prefix"><span class="octicon octicon-link"></span></a> Vendors Prefix</h2>
 
 <ul>
 <li>-o- Opera</li>
