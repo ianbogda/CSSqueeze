@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Cssqueeze by ianbogda</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Cssqueeze</h1>
+          <h2>CSSqueeze: Efficient CSS minification in a single PHP class licensed under Apache 2 and GPLv2.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/ianbogda/CSSqueeze/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/ianbogda/CSSqueeze/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/ianbogda/CSSqueeze" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="cssqueeze-efficient-css-minification-in-php" class="anchor" href="#cssqueeze-efficient-css-minification-in-php"><span class="octicon octicon-link"></span></a>CSSqueeze: Efficient CSS minification in PHP</h1>
+
+<p><a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/license.png" alt="License"></a></p>
+
+<p><a href="https://travis-ci.org/ianbogda/CSSqueeze"><img src="https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master" alt="Build Status"></a> <a href="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/"><img src="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/coverage.png?s=dac1996f32de040657203c458bd96aea79b390c7" alt="Code Coverage"></a> <a href="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/"><img src="https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/quality-score.png?s=484130f5adab9ca8ce1dfab522a52406c0b336e2" alt="Scrutinizer Quality Score"></a></p>
+
+<p><a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/v/stable.png" alt="Latest Stable Version"></a> <a href="https://packagist.org/packages/patchwork/cssqueeze"><img src="https://poser.pugx.org/patchwork/cssqueeze/v/unstable.png" alt="Latest Unstable Version"></a></p>
+
+<p><a href="https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c"><img src="https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c/mini.png" alt="SensioLabsInsight"></a></p>
+
+<p>CSSqueeze …</p>
+
+<p>It's a single PHP class licensed under Apache 2 and GPLv2.</p>
+
+<h2>
+<a name="php" class="anchor" href="#php"><span class="octicon octicon-link"></span></a>PHP</h2>
+
+<ul>
+<li> PHP 5.3</li>
+<li> PHP 5.4</li>
+<li> PHP 5.5</li>
+</ul><h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li> Remove white space and extra characters
+
+<ul>
+<li>whitespace</li>
+<li>Last semicolon in a statement</li>
+<li>Measurement units for the values (eg margin: 0px -&gt; margin: 0)</li>
+<li>Comments (preserving <code>/*! important comments */</code>)</li>
+<li>Empty statements (eg p {})</li>
+</ul>
+</li>
+<li>Use shorthand properties
+
+<ul>
+<li>margin</li>
+<li>padding</li>
+<li>border</li>
+<li>outline</li>
+<li>list-style</li>
+<li>background (eg instead of background-color)</li>
+</ul>
+</li>
+<li>Compress colors
+
+<ul>
+<li>Use short notations of hexadecimal colors (Ex: color: # ff6600 becomes color: # f60;). Use colors supported in CSS 2 whose name is shorter than the hexadecimal.</li>
+</ul>
+</li>
+<li>Sorting CSS properties</li>
+<li>Merge properties</li>
+<li>merge rules if required</li>
+<li>
+<a href="https://github.com/import" class="user-mention">@import</a> CSS</li>
+<li>
+<a href="https://github.com/media" class="user-mention">@media</a> queries CSS</li>
+</ul><h2>
+<a name="compare-few-minifiers" class="anchor" href="#compare-few-minifiers"><span class="octicon octicon-link"></span></a>Compare few minifiers</h2>
+
+<p>ranking is by <em>after compression and gzipped</em>, <em>after compression</em></p>
+
+<p>file compressed : <a href="http://csszengarden.com/002/002.css">002/002.css from csszengarden.com</a></p>
+
+<table>
+<thead><tr>
+<td> </td> <td>origin</td> <td>after compression</td> <td>saved</td> <td>compression ratio</td> <td>after compression and gzipped</td> <td>compression and gzip ratio
+</td>
+  </tr></thead>
+<tbody>
+<tr>
+<td>CSSqueeze</td> <td>5547</td> <td>2862</td> <td>2685</td> <td>48,40%</td> <td>919</td> <td>83,43%</td>
+  </tr>
+<tr>
+<td>csscompressor</td> <td>5547</td> <td>2863</td> <td>2684</td> <td>48,39%</td> <td>920</td> <td>83,41%</td>
+  </tr>
+<tr>
+<td>YUI</td> <td>5547</td> <td>2902</td> <td>2645</td> <td>47,68%</td> <td>920</td> <td>83,41%</td>
+  </tr>
+<tr>
+<td>excssive.com</td> <td>5547</td> <td>2861</td> <td>2686</td> <td>48,42%</td> <td>924</td> <td>83,34%</td>
+  </tr>
+<tr>
+<td>cssminifier.com</td> <td>5547</td> <td>2875</td> <td>2672</td> <td>48,17%</td> <td>925</td> <td>83,32%</td>
+  </tr>
+<tr>
+<td>cssdrive.com</td> <td>5547</td> <td>2964</td> <td>2583</td> <td>46,57%</td> <td>934</td> <td>83,16%</td>
+  </tr>
+<tr>
+<td>minifycss.com</td> <td>5547</td> <td>2894</td> <td>2653</td> <td>47,83%</td> <td>936</td> <td>83,13%</td>
+  </tr>
+</tbody>
+</table><h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>Todo</h2>
+
+<ul>
+<li>preserving the CSS hack</li>
+<li>Add vendor prefix</li>
+<li>More shorthands</li>
+<li>rgba(</li>
+<li>change hack throught html class</li>
+</ul><h2>
+<a name="vendors-prefix" class="anchor" href="#vendors-prefix"><span class="octicon octicon-link"></span></a>Vendors Prefix</h2>
+
+<ul>
+<li>-o- Opera</li>
+<li>-moz- Gecko (Mozilla)</li>
+<li>-webkit- Webkit (Chrome, Safari, Android...)</li>
+<li>-ms-/mso- (Internet Explorer)</li>
+<li>-khtml- KHTML (Konqueror)</li>
+</ul>
+        </section>
+
+        <footer>
+          Cssqueeze is maintained by <a href="https://github.com/ianbogda">ianbogda</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
