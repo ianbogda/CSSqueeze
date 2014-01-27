@@ -284,9 +284,7 @@ class CSSqueeze
         $this->keepHack = $keepHack;
 
         // Get content from @import
-        // \@import url ("file.css") media;
-        preg_match_all("/@import\s+(url\s*)?\(?\s*['\"]?([.\w\d]+)['\"]?\s*\)?\s*(.*)?\s*;/", $css, $matches);
-        if (0 < $count = count($matches[0])) $css = $this->getImport($css, $matches, $count);
+        if (false !== strpos($css, '@import')) $css = $this->getImport($css);
 
         // get CSS treated
         $css = $this->getCSS($css);
@@ -298,13 +296,14 @@ class CSSqueeze
      * get content from \@import
      *
      * @param string $css     CSS to consume
-     * @param array  $matches \@import to replace
-     * @param int    $count   count of \@import to replace
      *
      * @return string \@import replaced by th CSS
      */
-    protected function getImport($css, $matches, $count)
+    protected function getImport($css)
     {
+        // \@import url ("file.css") media;
+        preg_match_all("/@import\s+(url\s*)?\(?\s*['\"]?([.\w\d]+)['\"]?\s*\)?\s*(.*)?\s*;/", $css, $matches);
+        $count = count($matches[0]);
 
         $basePath = $this->configuration['BasePath'];
         for($i = 0; $i < $count; ++$i)
