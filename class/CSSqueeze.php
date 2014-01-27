@@ -42,7 +42,7 @@ class CSSqueeze
     /** @var array $colorValues array of css color values */
     protected $colorValues = array(
         'background-color', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color',
-        'border-left-color', 'color',       'outline-color',    'column-rule-color',
+        'border-left-color', 'color',       'outline-color',    'column-rule-color',  'background',
     );
 
     /** @var array $listeStyleType array of css liste style type */
@@ -99,7 +99,7 @@ class CSSqueeze
         'wheat'             => '#F5DEB3', 'whitesmoke'           => '#F5F5F5', 'yellowgreen'     => '#9ACD32'
     );
 
-    /** @var array $shortColor array of css shorthands */
+    /** @var array $shorthands array of css shorthands */
     protected $shorthands = array(
         'border-color'  => array('border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',),
         'border-style'  => array('border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',),
@@ -110,12 +110,12 @@ class CSSqueeze
         'border-radius' => 0
     );
 
-    /** @var array $shortColor array of css font weight */
+    /** @var array $fontWeight array of css font weight */
     protected $fontWeight = array('normal', 'bold', 'bolder', 'lighter', '100', '200', '300',
                                   '400',    '500',   '600', '  700',     '800', '900', 'inherit'
     );
 
-    /** @var array $shortColor array of css properties */
+    /** @var array $properties array of css properties */
     protected $properties = array(
         'position', 'top', 'right', 'bottom', 'left', 'z-index', 'display', 'visibility',
         '-webkit-flex-direction', '-webkit-flex-order', '-webkit-flex-pack', '-webkit-flex-align',
@@ -391,12 +391,8 @@ class CSSqueeze
 
         // Merge selectors //
         list($s, $b) = $this->mergeSelectors($selectors, $blocks);
-        $_css_ = $this->uniqueArray($s, $b);
 
-        // Which one ?
-        $_css = $this->uniqueArray($selectors, $blocks);
-
-        return strlen($_css_) > strlen($_css) ? $_css : $_css_;
+        return $this->uniqueArray($s, $b);
     }
 
     /**
