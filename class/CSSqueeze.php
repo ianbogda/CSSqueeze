@@ -301,12 +301,15 @@ class CSSqueeze
      */
     protected function getImport($css)
     {
-        while (preg_match("/@import\s+(url)?(\()?('|\")([^'|^\"]+)('|\")(\)?);\s+/", $css, $matches))
+        // \@import url ("file.css") media;
+        while (preg_match("/@import\s+(url)?\s*(\()?\s*['\"]?(?P<file>[.\w\d]+)['\"]?\s*(\))?\s*?(?<media>.*)?\s*;/", $css, $matches))
         {
-            $url = $matches[4];
+            $url   = $matches['file'];
+            $media = $matches['media'];
             if (is_file($this->configuration['BasePath'] . '/' . $url) && is_readable($this->configuration['BasePath'] . '/' . $url))
             {
                 $import = file_get_contents($this->configuration['BasePath'] . '/' . $url); // or some other way of reading that url
+                if (!empty($matches['media'])) $import = "@media {$media} { {$import} }";
                 $css = str_replace($matches[0], $import, $css);
             }
         }

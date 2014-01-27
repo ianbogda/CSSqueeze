@@ -1,5 +1,6 @@
 @import url('deep1.css');
 @import url("deep1.css");
+@import url(deep1.css)screen;
 @import ('deep1.css');
 @import ("deep1.css");
 @import "deep1.css";
