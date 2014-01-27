@@ -4,7 +4,7 @@
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the (at your option):
- * Apache License v2.0 (http://apache.org/licenses/LICENSE-2.0.txt), or
+i * Apache License v2.0 (http://apache.org/licenses/LICENSE-2.0.txt), or
  * GNU General Public License v2.0 (http://gnu.org/licenses/gpl-2.0.txt).
  */
 
@@ -302,15 +302,22 @@ class CSSqueeze
     protected function getImport($css)
     {
         // \@import url ("file.css") media;
-        while (preg_match("/@import\s+(url)?\s*(\()?\s*['\"]?(?P<file>[.\w\d]+)['\"]?\s*(\))?\s*?(?<media>.*)?\s*;/", $css, $matches))
+        $i = 0;
+        preg_match_all("/@import\s+(url)?\s*(\()?\s*['\"]?(?P<url>[.\w\d]+)['\"]?\s*(\))?\s*?(?<media>.*)?\s*;/", $css, $matches);
+        if (0 < $count = count($matches[0]))
         {
-            $url   = $matches['file'];
-            $media = $matches['media'];
-            if (is_file($this->configuration['BasePath'] . '/' . $url) && is_readable($this->configuration['BasePath'] . '/' . $url))
+            while($i < $count)
             {
-                $import = file_get_contents($this->configuration['BasePath'] . '/' . $url); // or some other way of reading that url
-                if (!empty($matches['media'])) $import = "@media {$media} { {$import} }";
-                $css = str_replace($matches[0], $import, $css);
+                $source = $matches[0]      [$i];
+                $url    = $matches['url']  [$i];
+                $media  = $matches['media'][$i];
+                if (is_file($this->configuration['BasePath'] . '/' . $url) && is_readable($this->configuration['BasePath'] . '/' . $url))
+                {
+                    $import = file_get_contents($this->configuration['BasePath'] . '/' . $url); // or some other way of reading that url
+                    if (strlen($media)) $import = "@media {$media} { {$import} }";
+                    $css = str_replace($source, $import, $css);
+                }
+                ++$i;
             }
         }
 
