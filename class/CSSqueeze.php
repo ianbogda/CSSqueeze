@@ -7,7 +7,6 @@
  * Apache License v2.0 (http://apache.org/licenses/LICENSE-2.0.txt), or
  * GNU General Public License v2.0 (http://gnu.org/licenses/gpl-2.0.txt).
  */
-namespace Patchwork;
 
 class CSSqueeze
 {
