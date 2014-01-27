@@ -302,23 +302,27 @@ class CSSqueeze
     protected function getImport($css)
     {
         // \@import url ("file.css") media;
+        preg_match_all("/@import\s+(url\s*)?\(?\s*['\"]?([.\w\d]+)['\"]?\s*\)?\s*(.*)?\s*;/", $css, $matches);
+        if (0 >= $count = count($matches[0])) return $css;
+
+        $basePath = $this->configuration['BasePath'];
         $i = 0;
-        preg_match_all("/@import\s+(url)?\s*(\()?\s*['\"]?(?P<url>[.\w\d]+)['\"]?\s*(\))?\s*?(?<media>.*)?\s*;/", $css, $matches);
-        if (0 < $count = count($matches[0]))
+        while($i < $count)
         {
-            while($i < $count)
+            $source = $matches[0][$i];
+            $url    = $matches[2][$i];
+            $media  = $matches[3][$i];
+            if (is_file($basePath . '/' . $url) && is_readable($basePath . '/' . $url))
             {
-                $source = $matches[0]      [$i];
-                $url    = $matches['url']  [$i];
-                $media  = $matches['media'][$i];
-                if (is_file($this->configuration['BasePath'] . '/' . $url) && is_readable($this->configuration['BasePath'] . '/' . $url))
-                {
-                    $import = file_get_contents($this->configuration['BasePath'] . '/' . $url); // or some other way of reading that url
-                    if (strlen($media)) $import = "@media {$media} { {$import} }";
-                    $css = str_replace($source, $import, $css);
-                }
-                ++$i;
+                $import = file_get_contents($basePath . '/' . $url);
+                $css = str_replace(
+                    $source,
+                    (strlen($media) ? "@media {$media} { {$import} }" : $import),
+                    $css
+                );
             }
+
+            ++$i;
         }
 
         return $css;
