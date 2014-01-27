@@ -284,7 +284,7 @@ class CSSqueeze
         $this->keepHack = $keepHack;
 
         // Get content from @import
-        if (false !== strpos($css, '@import')) $css = $this->getImport($css);
+        $css = $this->getImport($css);
 
         // get CSS treated
         $css = $this->getCSS($css);
@@ -311,15 +311,19 @@ class CSSqueeze
             $source = $matches[0][$i];
             $url    = $matches[2][$i];
             $media  = $matches[3][$i];
-            if (is_file($basePath . '/' . $url) && is_readable($basePath . '/' . $url))
+
+            $file   = $basePath . '/' . $url;
+
+            if (!is_file($file) || !is_readable($file))
             {
-                $import = file_get_contents($basePath . '/' . $url);
-                $css = str_replace(
-                    $source,
-                    (strlen($media) ? "@media {$media} { {$import} }" : $import),
-                    $css
-                );
+                $css = str_replace($source, '', $css);
+                continue;
             }
+
+            $import = file_get_contents($file);
+            strlen($media) && $import = "@media {$media} { {$import} }";
+
+            $css = str_replace($source, $import, $css);
         }
 
         return $css;
