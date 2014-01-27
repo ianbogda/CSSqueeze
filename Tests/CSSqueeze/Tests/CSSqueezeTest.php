@@ -156,4 +156,25 @@ class CSSqueezeTest extends \PHPUnit_Framework_TestCase
                 : $this->assertSame($expe, $test, "TestingXfail {$file}");
         }
     }
+
+    public function testCSSqueezesUnreadable()
+    {
+        $xfail= 0;
+        $files = array(
+            'unreadable.css',
+        );
+
+        foreach($files as $file)
+        {
+            $configuration = array('BasePath' => __DIR__ . '/test/');
+            $expe = file_get_contents(__DIR__ . '/expected/' . $file);
+
+            $cz = new CSSqueeze('', $configuration);
+			$test = $cz->squeeze($file) . "\n";
+
+            $xfail
+                ? $this->assertFalse($expe === $test, "Xfail {$file}")
+                : $this->assertSame($expe, $test, "TestingXfail {$file}");
+        }
+    }
 }
