@@ -1,4 +1,5 @@
 @import url('deep2.css');
+@import url('deep2.css') screen;
 
 #import {
     color : white;

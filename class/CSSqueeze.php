@@ -303,27 +303,21 @@ class CSSqueeze
     {
         // \@import url ("file.css") media;
         preg_match_all("/@import\s+(url\s*)?\(?\s*['\"]?([.\w\d]+)['\"]?\s*\)?\s*(.*)?\s*;/", $css, $matches);
-        $count = count($matches[0]);
+        // $matches[2] = file
+        // $matches[3] = media
 
         $basePath = $this->configuration['BasePath'];
-        for($i = 0; $i < $count; ++$i)
+        $i = 0;
+        foreach($matches[2] as $file)
         {
-            $source = $matches[0][$i];
-            $url    = $matches[2][$i];
             $media  = $matches[3][$i];
 
-            $file   = $basePath . '/' . $url;
+            $file   = @file_get_contents($basePath . '/' . $file);
+            $file && strlen($media) && $file = "@media {$media} { {$file} }";
 
-            if (!is_file($file) || !is_readable($file))
-            {
-                $css = str_replace($source, '', $css);
-                continue;
-            }
+            $css = str_replace($matches[0][$i], $file, $css);
 
-            $import = file_get_contents($file);
-            strlen($media) && $import = "@media {$media} { {$import} }";
-
-            $css = str_replace($source, $import, $css);
+            ++$i;
         }
 
         return $css;
