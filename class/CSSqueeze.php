@@ -335,6 +335,7 @@ class CSSqueeze
         // extract @media queries (tricks from https://gist.github.com/StanAngeloff/3164569)
         preg_match_all('#(?<media>(?:@media[^{]+)?){(?:(?:[^{}]+)|(?R))*}#s', $css, $captures);
 
+        $groups = array();
         // loop through all matches key
         foreach (array_keys($captures[0]) as $key)
         {
@@ -343,6 +344,20 @@ class CSSqueeze
             {
                 unset ($captures[0][$key]);
             }
+            else
+            {
+                // Utility function to create an array from a media query
+                $media = $captures['media'][$key];
+
+                // The code for this code starts off with the @media query in it ...
+                $code = $captures[0][$key];
+                $code = preg_replace('#' . preg_quote($media, '#') . '#u', '' , $code);
+                $code = preg_replace('#^{|}$#u', '', $code);
+
+                $groupKey = trim( preg_replace('#[^\w\d]+#u', '-', trim($key)));
+                array_key_exists($groupKey, $groups) || $groups[$groupKey] = array($media, '{');
+                $groups[$groupKey][] = $code;
+            }
         }
 
         // Erase all @media queries from input CSS
@@ -350,23 +365,7 @@ class CSSqueeze
         {
             $css = preg_replace('#\s*' . preg_quote($query, '#') . '#u', '', $css);
         }
-         $css = $this->allInOne($css);
-
-        // Utility function to create an array from a media query
-        $groups = array();
-        foreach (array_keys($captures[0]) as $key)
-        {
-            $media = $captures['media'][$key];
-
-            // The code for this code starts off with the @media query in it ...
-            $code = $captures[0][$key];
-            $code = preg_replace('#' . preg_quote($media, '#') . '#u', '' , $code);
-            $code = preg_replace('#^{|}$#u', '', $code);
-
-            $groupKey = trim( preg_replace('#[^\w\d]+#u', '-', trim($key)));
-            array_key_exists($groupKey, $groups) || $groups[$groupKey] = array($media, '{');
-            $groups[$groupKey][] = $code;
-        }
+        $css = $this->allInOne($css);
 
         //sort and merge selectors,rules for each @media
         foreach (array_keys($groups) as $key)
