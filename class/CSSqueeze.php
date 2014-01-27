@@ -301,7 +301,7 @@ class CSSqueeze
      */
     protected function getImport($css)
     {
-        while (preg_match("/@import\s+(url)?\('?([^']+)'?\);\s+/", $css, $matches))
+        while (preg_match("/@import\s+(url)?\(['\"]?([^'|^\"]+)['|\"]?\);\s+/", $css, $matches))
         {
             $url = $matches[2];
             if (is_file($this->configuration['BasePath'] . '/' . $url) && is_readable($this->configuration['BasePath'] . '/' . $url))
