@@ -1,7 +1,9 @@
-@import url('shorthand.css');
-@import url("shorthand.css");
-@import (shorthand.css);
-@import ('shorthand.css');
+@import url('deep1.css');
+@import url("deep1.css");
+@import ('deep1.css');
+@import ("deep1.css");
+@import "deep1.css";
+@import 'deep1.css';
 
 #import {
     color : white;
