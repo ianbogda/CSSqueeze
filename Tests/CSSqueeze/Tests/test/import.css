@@ -1,4 +1,6 @@
 @import url('shorthand.css');
+@import (shorthand.css);
+@import ('shorthand.css');
 
 #import {
     color : white;
