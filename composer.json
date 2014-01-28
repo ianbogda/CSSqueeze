@@ -16,7 +16,9 @@
     "require": {
         "php": ">=5.3"
     },
-	"provide": "patchwork/cssqueeze",
+    "provide": {
+        "patchwork/cssqueeze": "*"
+    },
     "autoload": {
         "psr-0": {
             "CSSqueeze": "class/"
