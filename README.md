@@ -1,11 +1,11 @@
 CSSqueeze: Efficient CSS minification in PHP
 ==================================================
 
-[![License](https://poser.pugx.org/patchwork/cssqueeze/license.png)](https://packagist.org/packages/patchwork/cssqueeze)
+[![License](https://poser.pugx.org/ianbogda/cssqueeze/license.png)](https://packagist.org/packages/ianbogda/cssqueeze)
 
 [![Build Status](https://travis-ci.org/ianbogda/CSSqueeze.png?branch=master)](https://travis-ci.org/ianbogda/CSSqueeze) [![Code Coverage](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/coverage.png?s=dac1996f32de040657203c458bd96aea79b390c7)](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/badges/quality-score.png?s=484130f5adab9ca8ce1dfab522a52406c0b336e2)](https://scrutinizer-ci.com/g/ianbogda/CSSqueeze/)
 
-[![Latest Stable Version](https://poser.pugx.org/patchwork/cssqueeze/v/stable.png)](https://packagist.org/packages/patchwork/cssqueeze) [![Latest Unstable Version](https://poser.pugx.org/patchwork/cssqueeze/v/unstable.png)](https://packagist.org/packages/patchwork/cssqueeze)
+[![Latest Stable Version](https://poser.pugx.org/ianbogda/cssqueeze/v/stable.png)](https://packagist.org/packages/ianbogda/cssqueeze) [![Latest Unstable Version](https://poser.pugx.org/ianbogda/cssqueeze/v/unstable.png)](https://packagist.org/packages/ianbogda/cssqueeze)
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c/mini.png)](https://insight.sensiolabs.com/projects/73a1c49c-2b23-47ad-bdf8-09d1eda7484c)
 
