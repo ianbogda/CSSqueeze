@@ -1,5 +1,5 @@
 {
-    "name": "patchwork/cssqueeze",
+    "name": "ianbogda/cssqueeze",
     "type": "library",
     "description": "Efficient CSS minification in PHP",
     "keywords": ["css","compression","minification"],
@@ -12,10 +12,11 @@
             "role": "Developer"
         }
     ],
-    "version" : "1.2.1",
+    "version" : "1.2.2",
     "require": {
         "php": ">=5.3"
     },
+	"provide": "patchwork/cssqueeze",
     "autoload": {
         "psr-0": {
             "CSSqueeze": "class/"
