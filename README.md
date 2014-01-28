@@ -41,7 +41,7 @@ Features
 * Sorting CSS properties
 * Merge properties
 * merge rules if required
-* @import CSS
+* @import CSS only if file exists
 * @media queries CSS
 
 Compare few minifiers
@@ -86,7 +86,7 @@ file compressed : [002/002.css from csszengarden.com](http://csszengarden.com/00
 Todo
 ----
 
-* preserving the CSS hack
+* embed image and/or sprites background-image
 * Add vendor prefix
 * More shorthands
 * rgba(
