@@ -312,15 +312,16 @@ class CSSqueeze
         {
             $media  = $matches[3][$i];
 
-            if (false !== file_get_contents($basePath . '/' . $file)
+            if (false !== file_get_contents($basePath . '/' . $file))
             {
                 $file   = @file_get_contents($basePath . '/' . $file);
                 $file && strlen($media) && $file = "@media {$media} { {$file} }";
 
                 $css = str_replace($matches[0][$i], $file, $css);
-
-                ++$i;
             }
+            else $css = str_replace($matches[0][$i], '', $css);
+
+            ++$i;
         }
 
         return $css;
