@@ -312,7 +312,7 @@ class CSSqueeze
         {
             $media  = $matches[3][$i];
 
-            if (false !== file_get_contents($basePath . '/' . $file))
+            if (file_exists($basePath . '/' . $file))
             {
                 $file   = file_get_contents($basePath . '/' . $file);
                 $file && strlen($media) && $file = "@media {$media} { {$file} }";
