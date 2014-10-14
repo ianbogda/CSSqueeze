@@ -266,7 +266,7 @@ class CSSqueeze
     /**
     * Squeezes a Cascade Style Sheet source code.
     *
-    * @param void    $css        css file or content to consume.
+    * @param string    $css        css file or content to consume.
     * @param bool    $singleLine compress /or not css.
     * @param bool    $keepHack   keep /or not css hacks.
     *
@@ -332,7 +332,7 @@ class CSSqueeze
      *
      * @param string $css CSS to consume
      *
-     * @return array $ccs and $media
+     * @return string $ccs and $media
      */
     protected function getCSS($css)
     {
@@ -441,7 +441,7 @@ class CSSqueeze
     * @param array $selectors Array of css selectors.
     * @param array $blocks    Array of css blocks.  .
     *
-    * @return array Returns array of $slectors and $blocks.
+    * @return string Returns array of $slectors and $blocks.
     */
     protected function uniqueArray($selectors, $blocks)
     {
@@ -562,7 +562,7 @@ class CSSqueeze
     *
     * @param array $block      css to consume.
     *
-    * @return array Returns block sorted.
+    * @return string Returns block sorted.
     */
     public function sorter($block)
     {
@@ -729,7 +729,6 @@ class CSSqueeze
     * Deflat compressed css
     *
     * @param string $css    compressed css to consume.
-    * @param string $indent string indent
     *
     * @return string Returns css defalted.
     */
