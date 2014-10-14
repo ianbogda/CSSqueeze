@@ -314,7 +314,7 @@ class CSSqueeze
 
             if (false !== file_get_contents($basePath . '/' . $file))
             {
-                $file   = @file_get_contents($basePath . '/' . $file);
+                $file   = file_get_contents($basePath . '/' . $file);
                 $file && strlen($media) && $file = "@media {$media} { {$file} }";
 
                 $css = str_replace($matches[0][$i], $file, $css);
