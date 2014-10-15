@@ -10,5 +10,9 @@ before-script:
 script:
   - mkdir -p build/logs
   - phpunit --configuration phpunit.xml --coverage-text
+  - phpunit --coverage-clover=coverage.clover
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+
 after-script:
   - php vendor/bin/coveralls
