@@ -251,7 +251,6 @@ class CSSqueeze
      * @param string $deflatIndent
      * @param array $configuration [optional]
      *
-     * @return void
      */
     public function __construct($deflatIndent = null, array $configuration = null)
     {
@@ -560,7 +559,7 @@ class CSSqueeze
     /**
     * Sorter blocks
     *
-    * @param array $block      css to consume.
+    * @param string $block      css to consume.
     *
     * @return string Returns block sorted.
     */
