@@ -557,7 +557,7 @@ class CSSqueeze
     }
 
     /**
-    * Sorter blocks
+    * Sorter block
     *
     * @param string $block      css to consume.
     *
@@ -567,7 +567,7 @@ class CSSqueeze
     {
         $a = array(); // master array to hold all values
 
-        $declarations = explode(';', $block);
+        $declarations = strpos($block, ';') ? explode(';', $block) : array($block);
 
         // loop through each style and split apart the key from the value
         foreach($declarations as $declaration)

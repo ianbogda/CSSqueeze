@@ -19,6 +19,7 @@ PHP
 *  PHP 5.3
 *  PHP 5.4
 *  PHP 5.5
+*  PHP 5.6
 
 Features
 --------
